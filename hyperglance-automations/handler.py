@@ -1,23 +1,28 @@
 import azure.functions as func
 import json
 import importlib
+import logging
+
+logger = logging.getLogger()
 
 
 def main(eventBlob: func.InputStream):
     payload = json.loads(eventBlob.read().decode('utf-8'))
-    process_event(payload) # do something with outputs. I also need creds.
+    outputs = []
+    process_event(payload, outputs) # do something with outputs. I also need creds.
 
-def execute_on_resource(automation_to_execute, resource, action_params):
+def execute_on_resource(credentials, automation_to_execute, resource, action_params):
     ## Grab the account and region (some resources don't have a region, default to us-east-1)
     automation_account_id = resource["account"]
     # look at arn not region - s3 does not have a region
 
     ## Run the automation!
-    return automation_to_execute.hyperglance_automation()
+    automation_to_execute.hyperglance_automation(credentials, resource, action_params)
 
 
-def process_event(automation_data):
+def process_event(automation_data, outputs):
     ## For each chunk of results, execute the automation
+    credential = DefaultAzureCredential() # please can I do things azure? configure in identity in function app.
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -47,7 +52,10 @@ def process_event(automation_data):
                 action_params = automation.get("params", {})
 
                 automation_to_execute_output = execute_on_resource(
-                    automation_to_execute, resource, action_params
+                    credential,
+                    automation_to_execute,
+                    resource,
+                    action_params
                 )
                 automation["processed"].append(resource)
 

@@ -1,8 +1,9 @@
 
 
-def hyperglance_automation( resource: dict, automation_params = ''):
-    client = ComputeManagementClient(credential, subscription_id, api_version=None, base_url=None, profile=<KnownProfiles.default: <azure.profiles.DefaultProfile object>>, **kwargs)
-    compute_client.virtual_machines.being_start(GROUP_NAME, VM_NAME) # crendentials and client config to be added
+def hyperglance_automation(credential, resource: dict, automation_params = ''):
+    # A bit dubious about some of these params..
+    client = ComputeManagementClient(credential, resource['subscription'], api_version=None, base_url=None, profile=<KnownProfiles.default: <azure.profiles.DefaultProfile object>>, **kwargs)
+    client.virtual_machines.begin_start(resource['attributes']['Resource Group'], resource['attributes']['Computer Name']) 
 
 def info() -> dict:
   INFO = {

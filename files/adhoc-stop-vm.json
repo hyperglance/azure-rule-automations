@@ -1,0 +1,20 @@
+{
+    "name" : "adhoc-automation-run",
+    "results" : [ {
+      "automation" : {
+        "name" : "vm_stop"
+      },
+      "entities" : [ {
+        "datasource" : "Azure",
+        "attributes" : {
+            "Computer Name": "Jake-Dev-Automations"
+            
+        },
+        "id" : "914ecf4c-6ce2-4dc1-9bce-d62b02a13a9c",
+        "type" : "Virtual Machine",
+        "subscription" : "DevTest",
+        "tags" : { }
+      } ],
+      "entityType" : "Virtual Machine"
+    } ]
+}
