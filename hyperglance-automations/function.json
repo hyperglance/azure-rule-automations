@@ -1,0 +1,12 @@
+{
+  "scriptFile": "handler.py",
+  "bindings": [
+    {
+      "name": "eventBlob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "hyperglance-automations/{name}",
+      "connection": "hyperglanceautomations_STORAGE"
+    }
+  ]
+}
