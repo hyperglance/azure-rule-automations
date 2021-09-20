@@ -1,4 +1,5 @@
 import azure.functions as func
+import azure.identity as identity
 import json
 import importlib
 import logging
@@ -9,20 +10,13 @@ logger = logging.getLogger()
 def main(eventBlob: func.InputStream):
     payload = json.loads(eventBlob.read().decode('utf-8'))
     outputs = []
-    process_event(payload, outputs) # do something with outputs. I also need creds.
-
-def execute_on_resource(credentials, automation_to_execute, resource, action_params):
-    ## Grab the account and region (some resources don't have a region, default to us-east-1)
-    automation_account_id = resource["account"]
-    # look at arn not region - s3 does not have a region
-
-    ## Run the automation!
-    automation_to_execute.hyperglance_automation(credentials, resource, action_params)
+    process_event(payload, outputs) 
 
 
 def process_event(automation_data, outputs):
     ## For each chunk of results, execute the automation
-    credential = DefaultAzureCredential() # please can I do things azure? configure in identity in function app.
+    credential = identity.DefaultAzureCredential() # configure in identity in function app.
+    logger.info(credential)
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -50,13 +44,12 @@ def process_event(automation_data, outputs):
         for resource in resources:
             try:
                 action_params = automation.get("params", {})
+                logger.info('resource ' + str(resource))
+                logger.info('action params ' + str(action_params))
+                logger.info('automation to execute ' + str(automation_to_execute))
 
-                automation_to_execute_output = execute_on_resource(
-                    credential,
-                    automation_to_execute,
-                    resource,
-                    action_params
-                )
+                automation_to_execute.hyperglance_automation(credential, resource, action_params)
+
                 automation["processed"].append(resource)
 
             except Exception as err:
