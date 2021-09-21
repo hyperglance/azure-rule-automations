@@ -2,7 +2,7 @@
     "name" : "adhoc-automation-run",
     "results" : [ {
       "automation" : {
-        "name" : "vm_start"
+        "name" : "vm_delete"
       },
       "entities" : [ {
         "datasource" : "Azure",

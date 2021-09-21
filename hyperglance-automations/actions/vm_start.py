@@ -1,8 +1,7 @@
-
+from azure.mgmt.compute import ComputeManagementClient
 
 def hyperglance_automation(credential, resource: dict, automation_params = ''):
-    # A bit dubious about some of these params..
-    client = ComputeManagementClient(credential, resource['subscription'])
+    client = ComputeManagementClient(credential, resource['subscription']) # subscription id
     client.virtual_machines.begin_start(resource['attributes']['Resource Group'], resource['attributes']['Computer Name']) 
 
 def info() -> dict:

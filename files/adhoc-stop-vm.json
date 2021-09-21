@@ -7,12 +7,12 @@
       "entities" : [ {
         "datasource" : "Azure",
         "attributes" : {
-            "Computer Name": "Jake-Dev-Automations"
-            
+            "Computer Name": "Jake-Dev-Automations",
+            "Resource Group": "JAKE-DEV-AUTOMATIONS_GROUP"
         },
         "id" : "914ecf4c-6ce2-4dc1-9bce-d62b02a13a9c",
         "type" : "Virtual Machine",
-        "subscription" : "DevTest",
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
         "tags" : { }
       } ],
       "entityType" : "Virtual Machine"

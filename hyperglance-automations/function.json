@@ -5,7 +5,7 @@
       "name": "eventBlob",
       "type": "blobTrigger",
       "direction": "in",
-      "path": "hyperglance-automations/{name}",
+      "path": "hyperglance-automations/{name}.json",
       "connection": "hyperglanceautomations_STORAGE"
     }
   ]
