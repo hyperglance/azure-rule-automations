@@ -1,24 +1,10 @@
-import azure.functions as func
-import azure.identity as identity
-import json
 import importlib
 import logging
+from azure.storage.blob import BlockBlobService, PublicAccess
 
 logger = logging.getLogger()
- 
 
-def main(eventBlob: func.InputStream):
-    payload = json.loads(eventBlob.read().decode('utf-8'))
-    outputs = []
-    process_event(payload, outputs) 
-
-
-def process_event(automation_data, outputs):    
-   
-    # Environment variables (Function App -> Settings -> Configuration -> Application Settings)
-    # or identity (Function App -> Identity) must be used to authenticate.
-    credential = identity.DefaultAzureCredential() 
-    
+def process_event(credential, automation_data, outputs):    
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -56,4 +42,11 @@ def process_event(automation_data, outputs):
                 logger.info(err)
                 resource["error"] = str(err)  # augment resource with an error field
                 automation["errored"].append(resource)
+
+def upload_outputs(outputs: list):
+    try:
+        blob_service_client = BlockBlobService(
+            account_name='accountname', account_key='accountkey')
+    except Exception as e:
+        pass
     
