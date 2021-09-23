@@ -25,6 +25,6 @@ def main(eventBlob: func.InputStream):
         outputs.extend({'name':'critical_error', 'processed':[], 'errored':[], 'critical_error': str(e)})
     finally:
         for index, output in enumerate(outputs):
-            processing.upload_outputs(index, output, blob_prefix)
+            storage.upload_outputs(index, output, blob_prefix)
         storage.remove_pending_status(blob_prefix)
     
