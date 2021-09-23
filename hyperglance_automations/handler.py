@@ -3,6 +3,7 @@ import azure.identity as identity
 import json
 import logging
 import hyperglance_automations.processing as processing
+import hyperglance_automations.storage_utils as storage
 
 logger = logging.getLogger()
  
@@ -16,14 +17,14 @@ def main(eventBlob: func.InputStream):
 
     payload = json.loads(eventBlob.read().decode('utf-8'))
     outputs = []
-    blob_key = eventBlob.name
-    report_key_prefix = '/'.join(blob_key.split('/')[0:-1]).replace('/events/', '/reports/') + '/'
-    
+    blob_prefix = storage.map_prefix(eventBlob.name)
     try:
-        processing.process_event(payload, outputs) 
+        storage.put_pending_status(blob_prefix)
+        processing.process_event(credential, payload, outputs) 
     except Exception as e:
-        outputs.extend({'name':'critical_error', 'processed':[], 'errored':[], 'critical_error': ''})
+        outputs.extend({'name':'critical_error', 'processed':[], 'errored':[], 'critical_error': str(e)})
     finally:
         for index, output in enumerate(outputs):
-            processing.upload_outputs(index, output, report_key_prefix)
+            processing.upload_outputs(index, output, blob_prefix)
+        storage.remove_pending_status(blob_prefix)
     
