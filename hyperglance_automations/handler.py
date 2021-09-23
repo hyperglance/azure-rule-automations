@@ -16,9 +16,14 @@ def main(eventBlob: func.InputStream):
 
     payload = json.loads(eventBlob.read().decode('utf-8'))
     outputs = []
+    blob_key = eventBlob.name
+    report_key_prefix = '/'.join(blob_key.split('/')[0:-1]).replace('/events/', '/reports/') + '/'
+    
     try:
         processing.process_event(payload, outputs) 
     except Exception as e:
         outputs.extend({'name':'critical_error', 'processed':[], 'errored':[], 'critical_error': ''})
-    processing.upload_outputs
+    finally:
+        for index, output in enumerate(outputs):
+            processing.upload_outputs(index, output, report_key_prefix)
     

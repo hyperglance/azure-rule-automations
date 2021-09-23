@@ -1,6 +1,7 @@
 import importlib
 import logging
-from azure.storage.blob import BlockBlobService, PublicAccess
+import os
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 
 logger = logging.getLogger()
 
@@ -43,10 +44,19 @@ def process_event(credential, automation_data, outputs):
                 resource["error"] = str(err)  # augment resource with an error field
                 automation["errored"].append(resource)
 
-def upload_outputs(outputs: list):
-    try:
-        blob_service_client = BlockBlobService(
-            account_name='accountname', account_key='accountkey')
-    except Exception as e:
-        pass
+def upload_outputs(index, report: dict, report_prefix: str):
+  all_resources = report['processed'] + report['errored']
+  automation_name = report['name']
+  num_successful = len(report['processed'])
+  num_errored = len(report['errored'])
+  total = num_successful + num_errored
+  report_name = f'report_{automation_name}_total({total})_success({num_successful})_error({num_errored})_{index}.json'
+  try:
+        blob_service_client = BlobServiceClient.from_connection_string(os.environ['hyperglanceautomations_STORAGE'])
+        blob_client = blob_service_client.get_blob_client(
+            container='hyperglance-automations',
+            blob=''.join([report_prefix, report_name]))
+        blob_client.upload_blob(str(report))
+  except Exception as e:
+        logger.error(e)
     
