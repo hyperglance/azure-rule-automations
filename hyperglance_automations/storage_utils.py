@@ -6,12 +6,11 @@ import json
 logger = logging.getLogger()
 
 def upload_outputs(index, report: dict, report_prefix: str):
-    all_resources = report["processed"] + report["errored"]
     automation_name = report["name"]
     num_successful = len(report["processed"])
     num_errored = len(report["errored"])
     total = num_successful + num_errored
-    report_name = f"report_{automation_name}_total({total})_success({num_successful})_error({num_errored})_{str(index)}.json"
+    report_name = f"report_{automation_name}_total({total})_success({num_successful})_error({num_errored})_{index}.json"
     try:
         blob_service_client = BlobServiceClient.from_connection_string(
             os.environ["hyperglanceautomations_STORAGE"]
@@ -20,7 +19,7 @@ def upload_outputs(index, report: dict, report_prefix: str):
             container="hyperglance-automations",
             blob="".join([report_prefix, report_name]),
         )
-        blob_client.upload_blob(json.dumps(report))
+        blob_client.upload_blob(json.dumps(report), overwrite=True)
     except Exception as e:
         logger.error(e)
 
@@ -30,7 +29,7 @@ def put_pending_status(prefix: str):
             container="hyperglance-automations",
             blob="".join([prefix, 'is_pending']),
     )
-    blob_client.upload_blob('')
+    blob_client.upload_blob('', overwrite=True)
 
 def remove_pending_status(prefix: str):
     blob_service_client = BlobServiceClient.from_connection_string(os.environ["hyperglanceautomations_STORAGE"])

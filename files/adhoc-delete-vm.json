@@ -7,8 +7,8 @@
       "entities" : [ {
         "datasource" : "Azure",
         "attributes" : {
-            "Computer Name": "Jake-Dev-Automations",
-            "Resource Group": "JAKE-DEV-AUTOMATIONS_GROUP"
+            "Computer Name": "hyperglance-automations-2",
+            "Resource Group": "HYPERGLANCE-AUTOMATIONS"
             
         },
         "id" : "914ecf4c-6ce2-4dc1-9bce-d62b02a13a9c",

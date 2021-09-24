@@ -16,17 +16,14 @@ def process_event(credential, automation_data, outputs):
         automation["processed"] = []
         automation["errored"] = []
         automation["critical_error"] = None
-        logger.info(automation)
         outputs.append(automation)
-        logger.info('processing before ' + str(outputs))
 
         ## Dynamically load the module that will handle this automation
         try:
             automation_to_execute = importlib.import_module(
-                "".join(["hyperglance-automations.", "actions.", automation_name])
+                "".join(["hyperglance_automations.", "actions.", automation_name])
             )
         except Exception as e:
-            logger.error(str(e))
             msg = "Unable to find or load an automation called: %s" % automation_name
             automation["critical_error"] = msg
             return
@@ -35,20 +32,14 @@ def process_event(credential, automation_data, outputs):
         for resource in resources:
             try:
                 action_params = automation.get("params", {})
-                logger.info("resource " + str(resource))
-                logger.info("action params " + str(action_params))
-                logger.info("automation to execute " + str(automation_to_execute))
-
                 automation_to_execute.hyperglance_automation(
                     credential, resource, action_params
                 )
                 automation["processed"].append(resource)
 
             except Exception as err:
-                logger.info(err)
                 resource["error"] = str(err)  # augment resource with an error field
                 automation["errored"].append(resource)
-        
 
 
 

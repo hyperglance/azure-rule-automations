@@ -22,7 +22,7 @@ def main(eventBlob: func.InputStream):
         storage.put_pending_status(blob_prefix)
         processing.process_event(credential, payload, outputs) 
     except Exception as e:
-        outputs.extend({'name':'critical_error', 'processed':[], 'errored':[], 'critical_error': str(e)})
+        outputs.append({'name':'critical_error', 'processed':[], 'errored':[], 'critical_error': str(e)})
     finally:
         for index, output in enumerate(outputs):
             storage.upload_outputs(index, output, blob_prefix)
