@@ -9,3 +9,9 @@ variable "tags" {
     Source      = "https://github.com/hyperglance/azure-rule-automations"
   }
 }
+
+variable "region" {
+  type        = string
+  description = "value"
+  default     = "East US"
+}
