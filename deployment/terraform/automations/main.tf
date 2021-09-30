@@ -84,6 +84,14 @@ resource "azurerm_storage_container" "hyperglance-automations-storage-container"
   container_access_type = "private"
 }
 
+# Upload HyperglanceAutomations.json to storage container
+resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
+  name                   = "HyperglanceAutomations.json"
+  storage_account_name   = azurerm_storage_account.hyperglance-automations-storage-account.name
+  storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
+  type                   = "Block"
+  source                 = "../../../files/HyperglanceAutomations.json"
+}
 
 #### Permissions ####
 
