@@ -10,8 +10,11 @@ def upload_outputs(index, report: dict, report_prefix: str):
     num_successful = len(report["processed"])
     num_errored = len(report["errored"])
     total = num_successful + num_errored
+
+    all_resources = report["processed"] + report["errored"]
+    subscriptions = ','.join(set(map(lambda resource: resource['subscription'], all_resources)))
     # do not add .json extension - this gives infinite recursion
-    report_name = f"report_{automation_name}_total({total})_success({num_successful})_error({num_errored})_{index}" 
+    report_name = f"report_{automation_name}_total({total})_success({num_successful})_error({num_errored})_subscriptions({subscriptions})_{index}" 
     try:
         blob_service_client = BlobServiceClient.from_connection_string(
             os.environ["hyperglanceautomations_STORAGE"]
