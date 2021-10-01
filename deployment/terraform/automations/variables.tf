@@ -14,7 +14,7 @@ variable "tags" {
 # Define the Azure region to deploy the resources in
 variable "region" {
   type        = string
-  description = "value"
+  description = "Azure region to deploy resources in e.g. East US"
 }
 
 # Cap the number of workers that can be allocated to the function
