@@ -15,7 +15,6 @@ variable "tags" {
 variable "region" {
   type        = string
   description = "value"
-  default     = "East US"
 }
 
 # Cap the number of workers that can be allocated to the function
