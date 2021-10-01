@@ -1,4 +1,4 @@
-
+# Generare random suffix for Hyperglance automations associated assets
 resource "random_pet" "hyperglance-automations-name" {
   length    = 2
   prefix    = "hyperglance-automations"
@@ -6,6 +6,7 @@ resource "random_pet" "hyperglance-automations-name" {
 }
 
 # Storage account name can only consist of lowercase letters and numbers, and must be between 3 and 24 characters long
+# Generating separate random string for this
 resource "random_string" "hyperglance-automations-storage-account-name" {
   length  = 12
   lower   = true
@@ -56,6 +57,9 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   os_type                    = "linux"
   identity {
     type = "SystemAssigned"
+  }
+  site_config {
+    app_scale_limit = var.app_scale_limit
   }
   app_settings = {
     "hyperglanceautomations_STORAGE" = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
