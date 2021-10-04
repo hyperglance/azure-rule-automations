@@ -103,6 +103,20 @@ resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
 data "azurerm_subscription" "primary" {
 }
 
+# ---------------------------------------------------------------------------------------------------------------------
+# IS WINDOWS?
+# ---------------------------------------------------------------------------------------------------------------------
+
+locals {
+  is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
+}
+
+data "external" "utilised-subscriptions" {
+    program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
+}
+
+
+
 # Give function access to write to storage account
 resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contributor" {
   scope                = azurerm_storage_account.hyperglance-automations-storage-account.id
@@ -112,7 +126,8 @@ resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contrib
 
 # Give function access to control VMs in current subscription
 resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
-  scope                = data.azurerm_subscription.primary.id
+  for_each = data.external.utilised-subscriptions
+  scope                = each.key
   role_definition_name = "Virtual Machine Contributor"
   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
 }

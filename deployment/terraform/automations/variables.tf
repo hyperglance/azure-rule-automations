@@ -17,6 +17,11 @@ variable "region" {
   description = "Azure region to deploy resources in e.g. East US"
 }
 
+variable "utilised-subscriptions-script" {
+  type = string
+  description = "location of the script which parses subscriptions.csv"
+}
+
 # Cap the number of workers that can be allocated to the function
 variable "app_scale_limit" {
   type = number
