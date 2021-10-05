@@ -127,9 +127,9 @@ resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contrib
 
 # Give function access to control VMs in current subscription
 # Create a new role assignment for each subscription
-resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
-   for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscriptions[0].id])
-   scope                = each.key
-   role_definition_name = "Virtual Machine Contributor"
-   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
- }
+# resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
+#    for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscriptions[0].id])
+#    scope                = each.key
+#    role_definition_name = "Virtual Machine Contributor"
+#    principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
+#  }

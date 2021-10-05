@@ -7,3 +7,7 @@ output "func-command" {
   description = "Command to deploy function code"
   value       = module.hyperglance-automations.func-command
 }
+
+output "available-subscriptions" {
+  value       = module.hyperglance-automations.available-subscriptions
+}
