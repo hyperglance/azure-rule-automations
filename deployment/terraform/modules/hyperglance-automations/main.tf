@@ -94,7 +94,22 @@ resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
   storage_account_name   = azurerm_storage_account.hyperglance-automations-storage-account.name
   storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
   type                   = "Block"
-  source                 = "${path.module}/../../../files/HyperglanceAutomations.json"
+  source                 = "${path.module}/../../../../files/HyperglanceAutomations.json"
+}
+
+locals {
+  is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
+}
+
+# Get the utilised subscriptions from the subscriptions.csv
+data "external" "utilised-subscriptions" {
+    program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
+}
+
+# Get the id of all of the subscriptions that are in subscriptions.csv and that we have access to
+data "azurerm_subscriptions" "available-subscriptions" {
+    for_each = toset(keys(data.external.utilised-subscriptions.result))
+    display_name_prefix = each.value
 }
 
 #### Permissions ####
@@ -103,21 +118,6 @@ resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
 data "azurerm_subscription" "primary" {
 }
 
-data "azurerm_subscriptions" "available-subscriptions" {
-    for_each = toset(keys(data.external.utilised-subscriptions.result))
-    display_name_prefix = each.value
-}
-
-locals {
-  is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
-}
-
-data "external" "utilised-subscriptions" {
-    program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
-}
-
-
-
 # Give function access to write to storage account
 resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contributor" {
   scope                = azurerm_storage_account.hyperglance-automations-storage-account.id
@@ -125,10 +125,11 @@ resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contrib
   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
 }
 
-#  # Give function access to control VMs in current subscription
-# resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
-#    for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscription_id])
-#    scope                = each.key
-#    role_definition_name = "Virtual Machine Contributor"
-#    principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
-#  }
+# Give function access to control VMs in current subscription
+# Create a new role assignment for each subscription
+resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
+   for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscriptions[0].id])
+   scope                = each.key
+   role_definition_name = "Virtual Machine Contributor"
+   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
+ }

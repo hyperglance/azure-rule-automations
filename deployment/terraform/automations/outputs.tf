@@ -3,6 +3,7 @@ output "storage_account_resource_id" {
   value       = module.hyperglance-automations.storage_account_resource_id
 }
 
-output "debug" {
-  value       = module.hyperglance-automations.debug
+output "func-command" {
+  description = "Command to deploy function code"
+  value       = module.hyperglance-automations.func-command
 }
