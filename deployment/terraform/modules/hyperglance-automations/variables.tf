@@ -15,6 +15,12 @@ variable "tags" {
 variable "region" {
   type        = string
   description = "Azure region to deploy resources in e.g. East US"
+  default = "East US"
+}
+
+variable "utilised-subscriptions-script" {
+  type = string
+  description = "location of the script which parses subscriptions.csv"
 }
 
 # Cap the number of workers that can be allocated to the function
