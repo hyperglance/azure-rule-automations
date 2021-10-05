@@ -39,15 +39,26 @@ To [assign Azure roles to a managed identity](https://docs.microsoft.com/en-us/a
 	 git clone https://github.com/hyperglance/azure-rule-automations.git
 	```
 
-4. Deploy the stack:
+4.  Navigate to the terraform deployment directory 
+	
+	```
+	cd azure-rule-automations/deployment/terraform/automations
+    ```
+
+	Create a a file ```subscriptions.csv``` with the subscriptions you want to act on separated by a comma.
+
+	```
+	MySubscription, AnotherSubscriptionOfMine, ...
+	```
+
+5. Deploy the stack:
 	> Terraform will prompt for the region you wish to deploy to and for final confirmation.
-	```bash
-	 cd azure-rule-automations/deployment/terraform/automations
+	```
 	 terraform init
 	 terraform apply
 	```
 
-5. Once complete, the storage account ID and  will be returned:
+6. Once complete, the storage account ID and  will be returned:
 	```bash
 	Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
 
@@ -63,7 +74,7 @@ To [assign Azure roles to a managed identity](https://docs.microsoft.com/en-us/a
 	Copy the storage account ID into the Hyperglance UI:  __Settings ➔ Automations ➔ Azure ➔ Storage Account Resource ID__
 	or visit this URL: https://your-hyperglance-ip/#/admin/automations
 
-6. Deploy the function code to the function
+7. Deploy the function code to the function
     
     __Note:__ We're working on integrating this step into the Terraform deployment...
 
@@ -74,7 +85,7 @@ To [assign Azure roles to a managed identity](https://docs.microsoft.com/en-us/a
 	 func azure functionapp publish hyperglance-automations-legible-buffalo
 	```
 
-7. __That's it - Automations are now enabled against this subscription!__
+8. __That's it - Automations are now enabled against this subscription!__
 	* Within Hyperglance click on any rule or visit the Advanced Search page to start exploring automations features.
 
 ## Contributions
