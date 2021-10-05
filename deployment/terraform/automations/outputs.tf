@@ -8,6 +8,3 @@ output "func-command" {
   value       = module.hyperglance-automations.func-command
 }
 
-output "available-subscriptions" {
-  value       = module.hyperglance-automations.available-subscriptions
-}

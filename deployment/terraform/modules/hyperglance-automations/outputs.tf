@@ -8,9 +8,6 @@ output "func-command" {
   value       = "func azure functionapp publish ${azurerm_function_app.hyperglance-automations-app.name}"
 }
 
-output "available-subscriptions" {
-  value       = data.azurerm_subscriptions.available-subscriptions
-}
 
 
 
