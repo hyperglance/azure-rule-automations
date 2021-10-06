@@ -62,13 +62,14 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
     app_scale_limit = var.app_scale_limit
   }
   app_settings = {
-    "hyperglanceautomations_STORAGE" = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
-    "AzureWebJobsDisableHomepage"    = true
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
-    "ENABLE_ORYX_BUILD"              = true
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = 1
-    "FUNCTIONS_WORKER_RUNTIME"       = "python"
-    "BUILD_FLAGS"                    = "UseExpressBuild"
+    hyperglanceautomations_STORAGE = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
+    AzureWebJobsDisableHomepage    = true
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
+    ENABLE_ORYX_BUILD              = true
+    SCM_DO_BUILD_DURING_DEPLOYMENT = 1
+    FUNCTIONS_WORKER_RUNTIME       = "python"
+    BUILD_FLAGS                    = "UseExpressBuild"
+    HASH = base64encode(filesha256(var.function-zip))
   }
   tags = var.tags
 }
@@ -97,15 +98,25 @@ resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
   source                 = "${path.module}/../../../../files/HyperglanceAutomations.json"
 }
 
+# Upload the function code to a blob for deployment
+resource "azurerm_storage_blob" "function-code" {
+    name = "hyperglance_automations.zip"
+    storage_account_name = azurerm_storage_account.hyperglance-automations-storage-account.name
+    storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
+    type = "Block"
+    source = "${var.functionapp}"
+}
+
 locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 }
 
-# resource "null_resource" "upload-function-code" {
-#     provisioner "local-exec" {
-#       command
-#     }
-# }
+resource "null_resource" "compress-code" {
+    provisioner "local-exec" {
+      command = local.is-windows ? "Compress-Archive ..\\..\\..\\hyperglance_automations {var.function-zip}" : "zip -r {var.function-zip} ../../../hyperglance_automations" 
+      interpreter = local.is-windows ? ["PowerShell", "-Command"] : ["bash", "-c"]
+    }
+}
 
 # Get the utilised subscriptions from the subscriptions.csv
 data "external" "utilised-subscriptions" {

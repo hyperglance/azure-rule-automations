@@ -20,7 +20,7 @@ variable "region" {
 
 variable "utilised-subscriptions-script" {
   type = string
-  description = "location of the script which parses subscriptions.csv"
+  description = "Location of the script which parses subscriptions.csv"
 }
 
 # Cap the number of workers that can be allocated to the function
@@ -28,4 +28,10 @@ variable "app_scale_limit" {
   type = number
   description = "Maximum number of workers that can be allocated to the function"
   default = 5
+}
+
+variable "function-zip" {
+  type = string
+  description = "location for the generated hyperglance automations function code zip file"
+  default = "hyperglance_automations.zip"
 }
