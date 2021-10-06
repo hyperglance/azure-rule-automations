@@ -30,8 +30,4 @@ variable "app_scale_limit" {
   default = 5
 }
 
-variable "function-zip" {
-  type = string
-  description = "location for the generated hyperglance automations function code zip file"
-  default = "hyperglance_automations.zip"
-}
+

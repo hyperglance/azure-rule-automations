@@ -69,9 +69,10 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
     FUNCTIONS_WORKER_RUNTIME       = "python"
     BUILD_FLAGS                    = "UseExpressBuild"
-    HASH = base64encode(filesha256(var.function-zip))
+    HASH = base64encode(filesha256("hyperglance_automations.zip"))
   }
   tags = var.tags
+  depends_on = [null_resource.compressed-code]
 }
 
 # Enable application insights for function
@@ -104,17 +105,29 @@ resource "azurerm_storage_blob" "function-code" {
     storage_account_name = azurerm_storage_account.hyperglance-automations-storage-account.name
     storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
     type = "Block"
-    source = "${var.functionapp}"
+    source = "hyperglance_automations.zip"
+
+    depends_on = [null_resource.compressed-code]
 }
 
 locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 }
 
-resource "null_resource" "compress-code" {
+resource "null_resource" "compressed-code" {
     provisioner "local-exec" {
-      command = local.is-windows ? "Compress-Archive ..\\..\\..\\hyperglance_automations {var.function-zip}" : "zip -r {var.function-zip} ../../../hyperglance_automations" 
+      command = local.is-windows ? "Compress-Archive ..\\..\\..\\..\\hyperglance_automations hyperglance_automations.zip" : "\"zip -r hyperglance_automations.zip ../../../../hyperglance_automations\"" 
       interpreter = local.is-windows ? ["PowerShell", "-Command"] : ["bash", "-c"]
+    }
+}
+
+resource "null_resource" "remove-compressed-code" {
+  provisioner "local-exec" {
+     when = destroy
+     # cannot reference locals in a destroy block
+     command = (substr(pathexpand("~"), 0, 1) == "/" ? false : true) ? "Remove-Item hyperglance_automations.zip" : "rm hyperglance_automations.zip"
+     interpreter = (substr(pathexpand("~"), 0, 1) == "/" ? false : true) ? ["PowerShell", "-Command"] : ["bash", "-c"]
+
     }
 }
 
