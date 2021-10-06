@@ -101,6 +101,12 @@ locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 }
 
+# resource "null_resource" "upload-function-code" {
+#     provisioner "local-exec" {
+#       command
+#     }
+# }
+
 # Get the utilised subscriptions from the subscriptions.csv
 data "external" "utilised-subscriptions" {
     program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
@@ -127,9 +133,16 @@ resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contrib
 
 # Give function access to control VMs in current subscription
 # Create a new role assignment for each subscription
-resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
+resource "azurerm_role_assignment" "hyperglance-automations-x-subscription-virtual-machine-contributor" {
    for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscriptions[0].id if length(subscription.subscriptions) != 0])
    scope                = each.key
    role_definition_name = "Virtual Machine Contributor"
    principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
  }
+
+# Always give these perms for the current account
+resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Virtual Machine Contributor"
+  principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
+}
