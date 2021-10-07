@@ -69,10 +69,11 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
     FUNCTIONS_WORKER_RUNTIME       = "python"
     BUILD_FLAGS                    = "UseExpressBuild"
-    HASH = data.external.compress-function-code.result["HASH"]
-  }
+    HASH = data.external.compress-function-code.result["HASH"] 
+    WEBSITE_RUN_FROM_PACKAGE = "https://${azurerm_storage_account.hyperglance-automations-storage-account.name}.blob.core.windows.net/${azurerm_storage_container.hyperglance-automations-storage-container.name}/${azurerm_storage_blob.function-code.name}"
+  }  
+  
   tags = var.tags
-  depends_on = [null_resource.compressed-code]
 }
 
 # Enable application insights for function
@@ -106,8 +107,6 @@ resource "azurerm_storage_blob" "function-code" {
     storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
     type = "Block"
     source = "hyperglance_automations.zip"
-
-    depends_on = [null_resource.compressed-code]
 }
 
 locals {
@@ -115,7 +114,7 @@ locals {
 }
 
 data "external" "compress-function-code" {
-     program = local.is-windows ? ["py", "-3", var.compress-code-script] : ["python3", var.compress-code-script]
+     program = local.is-windows ? ["py", "-3", var.compress-code-script, "../terraform/automations/hyperglance_automations"] : ["python3", var.compress-code-script, "../terraform/automations/hyperglance_automations"]
 }
 
 

@@ -11,7 +11,7 @@ def zip_code(output: pathlib.Path, to_zip: pathlib.Path):
         bytes = f.read() 
         return encoder.standard_b64encode(hashlib.sha256(bytes).digest()).decode('utf-8');
 
-function_path = pathlib.Path(__file__).parents[2].joinpath('hyperglance_automations')
+function_path = pathlib.Path(__file__).parents[6].joinpath('hyperglance_automations') # ie. ../../hyperglance_automations
 digest = zip_code(sys.argv[1], function_path)
 
 # give to terraform 

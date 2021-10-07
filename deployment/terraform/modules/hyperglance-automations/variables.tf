@@ -37,11 +37,5 @@ variable "app_scale_limit" {
   default = 5
 }
 
-# Cap the number of workers that can be allocated to the function
-variable "zip-location" {
-  type = string
-  description = "The location at which the hyperglance_automations.zip file is generated (relative to the compress_code script)"
-  default = "../terraform/automations/hyperglance_automations"
-}
 
 
