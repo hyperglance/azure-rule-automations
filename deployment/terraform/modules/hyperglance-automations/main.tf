@@ -69,7 +69,7 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
     FUNCTIONS_WORKER_RUNTIME       = "python"
     BUILD_FLAGS                    = "UseExpressBuild"
-    #HASH = base64encode(filesha256("hyperglance_automations.zip"))
+    HASH = data.external.compress-function-code.result["HASH"]
   }
   tags = var.tags
   depends_on = [null_resource.compressed-code]
@@ -114,34 +114,15 @@ locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 }
 
-resource "null_resource" "compressed-code" {
-    provisioner "local-exec" {
-      command = local.is-windows ? "Compress-Archive ..\\..\\..\\hyperglance_automations hyperglance_automations.zip" : "\"zip -r hyperglance_automations.zip /Users/jake/Dev/azure-rule-automations/hyperglance_automations\"" 
-      interpreter = local.is-windows ? ["PowerShell", "-Command"] : ["bash", "-c"]
-    }
+data "external" "compress-function-code" {
+     program = local.is-windows ? ["py", "-3", var.compress-code-script] : ["python3", var.compress-code-script]
 }
-
-resource "null_resource" "compressed-code-remove" {
-  provisioner "local-exec" {
-     when = destroy
-     # cannot reference locals in a destroy block
-     command = (substr(pathexpand("~"), 0, 1) == "/" ? false : true) ? "Remove-Item hyperglance_automations.zip" : "rm -f hyperglance_automations.zip"
-     interpreter = (substr(pathexpand("~"), 0, 1) == "/" ? false : true) ? ["PowerShell", "-Command"] : ["bash", "-c"]
-
-    }
-}
-
 
 
 # Get the utilised subscriptions from the subscriptions.csv
 data "external" "utilised-subscriptions" {
     program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
 }
-
-# data "external" "utilised-subscriptions" {
-#     program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
-
-# }
 
 # Get the id of all of the subscriptions that are in subscriptions.csv and that we have access to
 data "azurerm_subscriptions" "available-subscriptions" {
