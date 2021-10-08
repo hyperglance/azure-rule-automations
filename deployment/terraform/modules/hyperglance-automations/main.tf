@@ -101,12 +101,6 @@ locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 }
 
-# resource "null_resource" "upload-function-code" {
-#     provisioner "local-exec" {
-#       command
-#     }
-# }
-
 # Get the utilised subscriptions from the subscriptions.csv
 data "external" "utilised-subscriptions" {
     program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
