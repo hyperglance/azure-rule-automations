@@ -4,6 +4,7 @@ import hashlib
 import pathlib
 import json
 import base64 as encoder
+import os
 
 def zip_code(output: pathlib.Path, to_zip: pathlib.Path):
     shutil.make_archive(output, 'zip', to_zip)
@@ -11,8 +12,22 @@ def zip_code(output: pathlib.Path, to_zip: pathlib.Path):
         bytes = f.read() 
         return encoder.standard_b64encode(hashlib.sha256(bytes).digest()).decode('utf-8');
 
-function_path = pathlib.Path(__file__).parents[6].joinpath('hyperglance_automations') # ie. ../../hyperglance_automations
-digest = zip_code(sys.argv[1], function_path)
+def cp_deployment(deployment_root: pathlib.Path, output: pathlib.Path):
+    excluded = ['deployment', 'files', 'LICENSE', 'README.md', '.git']
+    shutil.rmtree(output)
+    os.mkdir(output)
+    for item in deployment_root.iterdir():
+        if not any(word in str(item) for word in excluded):
+            if item.is_dir():
+                shutil.copytree(item, output + '/' + str(item.name))
+            else:
+                shutil.copy(item, output + '/' + str(item.name))
+
+
+
+function_path = pathlib.Path(__file__).parents[6] # ie. ../../
+cp_deployment(function_path, sys.argv[1])
+digest = zip_code(sys.argv[1], sys.argv[1])
 
 # give to terraform 
 print(json.dumps({'HASH': digest}))

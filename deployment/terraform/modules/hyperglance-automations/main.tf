@@ -114,7 +114,7 @@ locals {
 }
 
 data "external" "compress-function-code" {
-     program = local.is-windows ? ["py", "-3", var.compress-code-script, "../terraform/automations/hyperglance_automations"] : ["python3", var.compress-code-script, "../terraform/automations/hyperglance_automations"]
+     program = local.is-windows ? ["py", "-3", var.compress-code-script, "hyperglance_automations"] : ["python3", var.compress-code-script, "hyperglance_automations"]
 }
 
 
