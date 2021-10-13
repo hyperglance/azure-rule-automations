@@ -94,7 +94,8 @@ resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
   storage_account_name   = azurerm_storage_account.hyperglance-automations-storage-account.name
   storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
   type                   = "Block"
-  source                 = filemd5("${path.module}/../../../../files/HyperglanceAutomations.json")
+  source                 = "${path.module}/../../../../files/HyperglanceAutomations.json"
+  content_md5            = filemd5("${path.module}/../../../../files/HyperglanceAutomations.json")
 }
 
 locals {
