@@ -29,6 +29,16 @@
             ],
             "params": [],
             "permissions": []
+        },
+        {
+            "name": "vm_deallocate",
+            "displayName": "Deallocate Virtual Machine",
+            "description": "Shuts down the virtual machine and releases the compute resources. You are not billed for the compute resources that this virtual machine uses.",
+            "resourceTypes": [
+                "Virtual Machine"
+            ],
+            "params": [],
+            "permissions": []
         }
     ]
 }
