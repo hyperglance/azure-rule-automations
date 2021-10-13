@@ -39,6 +39,16 @@
             ],
             "params": [],
             "permissions": []
+        },
+        {
+            "name": "image_delete",
+            "displayName": "Delete Image",
+            "description": "Deletes an Image",
+            "resourceTypes": [
+                "Image"
+            ],
+            "params": [],
+            "permissions": []
         }
     ]
 }
