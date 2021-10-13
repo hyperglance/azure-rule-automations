@@ -7,7 +7,7 @@ def hyperglance_automation( credential, resource: dict, automation_params = ''):
 def info() -> dict:
   INFO = {
     "displayName": "Stop VM",
-    "description": "Stop a Virtual Machine",
+    "description": "Stops (Pauses) a Virtual Machine. Charges are still incurred for allocated resources such as IP addresses",
     "resourceTypes": [
       "Virtual Machine"
     ],

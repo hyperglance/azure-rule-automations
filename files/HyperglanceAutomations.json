@@ -3,7 +3,7 @@
         {
             "name": "vm_stop",
             "displayName": "Stop VM",
-            "description": "Stop a Virtual Machine",
+            "description": "Stops (Pauses) a Virtual Machine. Charges are still incurred for allocated resources such as IP addresses",
             "resourceTypes": [
                 "Virtual Machine"
             ],
@@ -32,8 +32,8 @@
         },
         {
             "name": "vm_deallocate",
-            "displayName": "Deallocate Virtual Machine",
-            "description": "Shuts down the virtual machine and releases the compute resources. You are not billed for the compute resources that this virtual machine uses.",
+            "displayName": "Stop (Deallocate) VM",
+            "description": "Shuts down the virtual machine and releases the compute resources. Charges are no longer incurred by this VM",
             "resourceTypes": [
                 "Virtual Machine"
             ],

@@ -6,8 +6,8 @@ def hyperglance_automation( credential, resource: dict, automation_params = ''):
 
 def info() -> dict:
   INFO = {
-    "displayName": "Deallocate Virtual Machine",
-    "description": "Shuts down the virtual machine and releases the compute resources. You are not billed for the compute resources that this virtual machine uses.",
+    "displayName": "Stop (Deallocate) VM",
+    "description": "Shuts down the virtual machine and releases the compute resources. Charges are no longer incurred by this VM",
     "resourceTypes": [
       "Virtual Machine"
     ],
