@@ -23,7 +23,7 @@ To [assign Azure roles to a managed identity](https://docs.microsoft.com/en-us/a
 
 ## Storage account permissions
 
-The account under which Hyperglance run needs to be able to write to the Storage Account used by the automations. This may be achieved by granting Hyperglance the ```Storage Blob Data Contributor``` role.
+The account under which Hyperglance run needs to be able to write to the Storage Account used by the automations. This may be achieved by granting Hyperglance the ```Storage Account Contributor``` built-in role.
 
 ## Quick Start
 
