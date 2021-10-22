@@ -28,6 +28,7 @@ The account under which Hyperglance run needs to be able to write to the Storage
 ## Quick Start
 
 1. Follow the pre-requisite steps above.
+
 2. Connect the Azure CLI to the Azure account that you wish to deploy the function in and set the subscription to use: `az login`
 
 	__Note:__ Guidance on authenticating to Azure can be found [here](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli)
@@ -91,6 +92,29 @@ The account under which Hyperglance run needs to be able to write to the Storage
 
 8. __That's it - Automations are now enabled against this subscription!__
 	* Within Hyperglance click on any rule or visit the Advanced Search page to start exploring automations features.
+
+# Azure Government
+
+_If you are planning to use actions with Azure Government, a couple of extra steps must be taken._
+
+
+Before login issue azure the following command 
+
+```az cloud set --name AzureUSGovernment```
+
+Government regions vary from (Default) Azure - set the region in 
+
+`<azure-automations-dir>/deployment/terraform/automations/main.tf`
+
+_for example, the contents of the file may look like_
+
+```
+module "hyperglance-automations" {
+  region = "useast"
+  source = "../modules/hyperglance-automations"
+  utilised-subscriptions-script = "../../metadata/parse_subscriptions.py"
+}
+```
 
 ## Contributions
 Are welcome!
