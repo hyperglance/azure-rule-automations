@@ -3,6 +3,7 @@ import json
 import json
 import sys
 import importlib
+import os
 
 
 def main(path: str):
@@ -15,9 +16,9 @@ def main(path: str):
     payload = json.loads(mock_blob)
     outputs = []
     try:
-        processing.process_event(payload, outputs) 
+        processing.process_event(payload) 
     except Exception as e:
-        outputs.append({'name':'critical_error', 'processed':[], 'errored':[], 'critical_error': str(e)})
+        print(e)
     
 
 if __name__ == "__main__":
