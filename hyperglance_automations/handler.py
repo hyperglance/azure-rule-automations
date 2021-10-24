@@ -1,10 +1,9 @@
 import azure.functions as func
-import azure.identity as identity
 import json
 import logging
 import hyperglance_automations.processing as processing
 import hyperglance_automations.storage_utils as storage
-from azure.identity import AzureAuthorityHosts
+import os
 
 logger = logging.getLogger()
  
