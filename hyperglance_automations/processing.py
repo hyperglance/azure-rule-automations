@@ -11,7 +11,11 @@ def process_event(automation_data, outputs):
         cloud = AZURE_PUBLIC_CLOUD
     else:
         cloud = AZURE_US_GOV_CLOUD
-    credential = authenticate(cloud)  
+    
+    # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
+    # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
+    # or identity (Function App -> Identity) must be used to authenticate.
+    credential = identity.DefaultAzureCredential(environment=cloud.endpoints.active_directory)    
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -46,12 +50,6 @@ def process_event(automation_data, outputs):
             except Exception as err:
                 resource["error"] = str(err)  # augment resource with an error field
                 automation["errored"].append(resource)
-
-def authenticate(cloud: Cloud) -> identity.DefaultAzureCredential:
-    # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
-    # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
-    # or identity (Function App -> Identity) must be used to authenticate.
-    return identity.DefaultAzureCredential(environment=cloud.endpoints.active_directory)    
 
 
 
