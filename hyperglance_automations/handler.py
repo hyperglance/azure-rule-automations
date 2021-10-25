@@ -1,12 +1,7 @@
 import azure.functions as func
 import json
-import logging
 import hyperglance_automations.processing as processing
 import hyperglance_automations.storage_utils as storage
-import os
-
-logger = logging.getLogger()
- 
 
 def main(eventBlob: func.InputStream):
     payload = json.loads(eventBlob.read().decode('utf-8'))

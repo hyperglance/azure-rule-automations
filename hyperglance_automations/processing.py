@@ -3,6 +3,7 @@ import azure.identity as identity
 from msrestazure.azure_cloud import *
 import os
 
+
 def process_event(automation_data, outputs):
     #  TODO on a subscription (per group of subscriptions) basis when resources from hyper backend
     # 1. Have Environment user facing metadata
@@ -31,7 +32,7 @@ def process_event(automation_data, outputs):
         ## Dynamically load the module that will handle this automation
         try:
             automation_to_execute = importlib.import_module(
-                "".join(["actions.", automation_name])
+                "".join(["hyperglance_automations.", "actions.", automation_name])
             )
         except Exception as e:
             msg = "Unable to find or load an automation called: %s" % automation_name
