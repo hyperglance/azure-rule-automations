@@ -93,14 +93,13 @@ The account under which Hyperglance run needs to be able to write to the Storage
 
 # Azure Government
 
-_If you are planning to use actions with Azure Government, a couple of extra steps must be taken._
-
+To deploy Hyperglance automations to Azure Government a couple of extra steps must be taken.
 
 Before login issue azure the following command 
 
 ```az cloud set --name AzureUSGovernment```
 
-Government regions vary from (Default) Azure - set the region in 
+Then set an appropriate Government region location in:
 
 `<azure-automations-dir>/deployment/terraform/automations/main.tf`
 
@@ -108,7 +107,7 @@ _for example, the contents of the file may look like_
 
 ```
 module "hyperglance-automations" {
-  region = "useast"
+  region = "usgovvirginia"
   source = "../modules/hyperglance-automations"
   utilised-subscriptions-script = "../../metadata/parse_subscriptions.py"
 }
