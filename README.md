@@ -27,7 +27,7 @@ The account under which Hyperglance run needs to be able to write to the Storage
 
 ## Quick Start
 
-1. Follow the pre-requisite steps above. If you are deploying to Azure Government [see the notes at the below](#azure-government).
+1. Follow the pre-requisite steps above. If you are deploying to Azure Government [see the notes the below](#azure-government).
 
 2. Connect the Azure CLI to the Azure account that you wish to deploy the function in and set the subscription to use: `az login`
 
