@@ -1,9 +1,8 @@
 import azure.functions as func
 import json
 import logging
-import hyperglance_automations.processing as processing
-import hyperglance_automations.storage_utils as storage
-import os
+import hyperglance_automations.processing.processing as processing
+import hyperglance_automations.processing.storage_utils as storage
 
 logger = logging.getLogger()
  
