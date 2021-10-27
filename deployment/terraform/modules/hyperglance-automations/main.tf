@@ -103,24 +103,22 @@ locals {
 }
 
 # Get the utilised subscriptions from the subscriptions.csv
-data "external" "utilised-subscriptions" {
+data "external" "subscription-ids" {
     program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
-}
-
-# Get the id of all of the subscriptions that are in subscriptions.csv and that we have access to
-data "azurerm_subscriptions" "available-subscriptions" {
-    for_each = toset(keys(data.external.utilised-subscriptions.result))
-    display_name_prefix = each.value
 }
 
 #### Permissions ####
 
-# module "hyperglance-role" {
-#   for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscriptions[0].id if length(subscription.subscriptions) != 0])
-#   source = "../hyperglance-role"
-#   subscription-id = each.key
-#   function-principal-id = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
-# }
+# Get current subscription ID
+data "azurerm_subscription" "primary" {
+}
+
+module "hyperglance-role" {
+  source = "../hyperglance-role"
+  function-principal-id = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
+  hyperglance-name = random_pet.hyperglance-automations-name.id
+  primary-subscription = data.azurerm_subscription.primary.id
+}
 
 # Give function access to write to storage account
 resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contributor" {
