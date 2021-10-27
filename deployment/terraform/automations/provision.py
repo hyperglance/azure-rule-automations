@@ -3,11 +3,11 @@ import sys
 from pathlib import Path
 
 def generate_providers(subscriptions: list):
-    provider_file = Path(__file__).parents[1].joinpath('modules', 'hyperglance-role', 'provider.tf')
+    provider_file = Path(__file__).parents[1].joinpath('modules', 'hyperglance-x-sub', 'provider.tf')
     file_contents = ""
     for subscription in subscriptions:
         file_contents += \
-"""
+"""# This is a generated configuration and will be overwritten upon reprovisioning
 provider "azurerm" {{
   features {{}}
   alias = "subscription-{sub}"
@@ -18,12 +18,11 @@ provider "azurerm" {{
         file.write(file_contents)
 
 def generate_main(subscriptions: list):
-  main_file = Path(__file__).parents[1].joinpath('modules', 'hyperglance-role', 'main.tf')
+  main_file = Path(__file__).parents[1].joinpath('modules', 'hyperglance-x-sub', 'main.tf')
   file_contents = ""
   for subscription in subscriptions:
     file_contents += \
-"""
-# Give function access to control VMs in current subscription
+"""# This is a generated configuration and will be overwritten upon reprovisioning
 # Create a new role assignment for each subscription
 resource "azurerm_role_assignment" "hyperglance-automations-role-assignment-{sub}" {{
    provider = azurerm.subscription-{sub}
@@ -36,7 +35,7 @@ resource "azurerm_role_definition" "hyperglance-automations-role-{sub}" {{
   provider = azurerm.subscription-{sub}
   name        = var.hyperglance-name
   scope       = "/subscriptions/{sub}"
-  assignable_scopes = ["${{var.primary-subscription}}"]
+  assignable_scopes = ["${{var.primary-subscription}}", "/subscriptions/{sub}"]
 
   permissions {{
     actions     = [

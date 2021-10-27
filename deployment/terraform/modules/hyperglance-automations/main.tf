@@ -102,19 +102,14 @@ locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 }
 
-# Get the utilised subscriptions from the subscriptions.csv
-data "external" "subscription-ids" {
-    program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
-}
-
-#### Permissions ####
-
 # Get current subscription ID
 data "azurerm_subscription" "primary" {
 }
 
-module "hyperglance-role" {
-  source = "../hyperglance-role"
+#### Permissions ####
+
+module "hyperglance-x-sub" {
+  source = "../hyperglance-x-sub"
   function-principal-id = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
   hyperglance-name = random_pet.hyperglance-automations-name.id
   primary-subscription = data.azurerm_subscription.primary.id
@@ -125,6 +120,28 @@ resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contrib
   scope                = azurerm_storage_account.hyperglance-automations-storage-account.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
+}
+
+
+# Give function access to control VMs in current subscription
+# Create a new role assignment for each subscription
+resource "azurerm_role_assignment" "hyperglance-automations-role-assignment" {
+   scope                = data.azurerm_subscription.primary.id
+   role_definition_id   = azurerm_role_definition.hyperglance-automations-role.role_definition_resource_id
+   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
+}
+
+resource "azurerm_role_definition" "hyperglance-automations-role" {
+  name        = random_pet.hyperglance-automations-name.id
+  scope       = data.azurerm_subscription.primary.id
+
+  permissions {
+    actions     = [
+      "Microsoft.Compute/images/delete"
+    ]
+    not_actions = []
+  }
+
 }
 
 

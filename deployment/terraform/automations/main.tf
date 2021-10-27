@@ -2,7 +2,7 @@
 
 
 module "hyperglance-automations" {
-  region = "useast"
+  region = "eastus"
   source = "../modules/hyperglance-automations"
   utilised-subscriptions-script = "../../metadata/parse_subscriptions.py"
 }

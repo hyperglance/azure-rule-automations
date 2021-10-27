@@ -17,7 +17,10 @@ def list_subscriptions(csv: pathlib.PurePath) -> dict:
         print('There was a problem parsing the api response from azure - returning an empty map')
         return {}
     for item in az_response:
-        subscription_ids = (subscription['id'] for subscription in az_response if subscription['name'] in elements)
+        subscription_ids = (
+            subscription['id'] for subscription in az_response \
+                 if subscription['name'] in elements and subscription['isDefault'] == False
+                 )
     return dict.fromkeys(subscription_ids)
 
 if __name__ == '__main__':
