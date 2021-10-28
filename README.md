@@ -56,6 +56,18 @@ The account under which Hyperglance run needs to be able to write to the Storage
 	MySubscription, AnotherSubscriptionOfMine, ...
 	```
 
+5. To use the automations accross __multiple subscriptions__, generate the correct terraform configuration for your environment. 
+ 
+	_Windows_
+	```
+	py -3 provision.py
+	```
+
+	_Unix_	
+	```
+	python3 provision.py
+	```
+
 5. Deploy the stack:
 	> Terraform will prompt for the region you wish to deploy to and for final confirmation.
 	```
