@@ -10,7 +10,7 @@ def list_subscriptions(csv: pathlib.PurePath) -> dict:
     except: 
         print('there was a problem parsing the list of subscriptions, returning an empty map')
         return {}
-    result = subprocess.run(['az', 'account', 'list'], stdout=subprocess.PIPE)
+    result = subprocess.run(['az account list'], stdout=subprocess.PIPE, shell=True)
     try:
         az_response = json.loads(result.stdout)
     except Exception as e:
