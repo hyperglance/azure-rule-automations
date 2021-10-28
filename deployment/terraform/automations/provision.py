@@ -51,7 +51,7 @@ resource "azurerm_role_definition" "hyperglance-automations-role-{sub}" {{
 
 
 if __name__ == '__main__':
-    automations_root = Path(__file__).parents[3]
+    automations_root = Path(__file__).resolve().parents[3]
     sys.path.append(str(automations_root.absolute()))
     parse_subscriptions = importlib.import_module('deployment.metadata.parse_subscriptions')
     subscription_ids = parse_subscriptions.list_subscriptions('subscriptions.csv').keys()
