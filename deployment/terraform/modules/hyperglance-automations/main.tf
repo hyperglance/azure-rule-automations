@@ -134,13 +134,6 @@ resource "azurerm_role_assignment" "hyperglance-automations-role-assignment" {
    principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
  }
 
-# Always give these perms for the current account
-resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
-  scope                = data.azurerm_subscription.primary.id
-  role_definition_name = "Virtual Machine Contributor"
-  principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
-}
-
 resource "azurerm_role_assignment" "hyperglance-automations-x-subscription-virtual-machine-contributor" {
    for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscriptions[0].id if length(subscription.subscriptions) != 0])
    scope                = each.key
