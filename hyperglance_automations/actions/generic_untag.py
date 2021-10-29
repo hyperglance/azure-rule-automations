@@ -18,8 +18,8 @@ def hyperglance_automation(credential, resource: dict, cloud:Cloud, automation_p
 
 def info() -> dict:
   INFO = {
-    "displayName": "Add Tag",
-    "description": "Adds a tag to a resource",
+    "displayName": "Remove Tag",
+    "description": "Remove a tag from a resource",
     "resourceTypes": [
       "Virtual Machine" 
     ],
