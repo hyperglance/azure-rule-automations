@@ -1,6 +1,7 @@
 import pathlib
 import json
 import subprocess
+import os
 
 def list_subscriptions(csv: pathlib.PurePath) -> dict:
     '''parse the csv into a shallow map of subscription ids'''
@@ -10,7 +11,9 @@ def list_subscriptions(csv: pathlib.PurePath) -> dict:
     except: 
         print('there was a problem parsing the list of subscriptions, returning an empty map')
         return {}
-    result = subprocess.run(['az account list'], stdout=subprocess.PIPE, shell=True)
+    result = subprocess.run(
+        ['bash', '-c', 'az account list'] if os.name == 'posix' else ['cmd', 'az account list'],
+        stdout=subprocess.PIPE)
     try:
         az_response = json.loads(result.stdout)
     except Exception as e:
