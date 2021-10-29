@@ -1,13 +1,20 @@
 from msrestazure.azure_cloud import Cloud
-import hyperglance_automations.processing.tagging as tagging
+from azure.mgmt.resource.resources import ResourceManagementClient
+
 
 def hyperglance_automation(credential, resource: dict, cloud:Cloud, automation_params = ''):
-    tagging.rm_tag(
+  url = cloud.endpoints.resource_manager
+  client = ResourceManagementClient(
       credential,
-      resource,
-      cloud,
-      automation_params['Key']    
-    )
+      resource['subscription'],
+      base_url=url,
+      credential_scopes=[url + '/.default']).tags
+  previous = client.get_at_scope(resource['id'])
+  ammended = previous.properties.tags
+  del ammended[automation_params['Key']]
+  tags = {'properties': {'tags' : ammended}}
+  client.create_or_update_at_scope(resource['id'], tags)
+    
 
 def info() -> dict:
   INFO = {
