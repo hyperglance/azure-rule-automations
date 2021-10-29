@@ -2,13 +2,11 @@ from msrestazure.azure_cloud import Cloud
 import hyperglance_automations.processing.tagging as tagging
 
 def hyperglance_automation(credential, resource: dict, cloud:Cloud, automation_params = ''):
-  def hyperglance_automation(credential, resource: dict, cloud:Cloud, automation_params = ''):
     tagging.rm_tag(
       credential,
       resource,
       cloud,
-      automation_params['Key'],
-      automation_params['Value']
+      automation_params['Key']    
     )
 
 def info() -> dict:
@@ -21,11 +19,6 @@ def info() -> dict:
     "params": [
       {
         "name": "Key",
-        "type": "string",
-        "default": ""
-      }, 
-      {
-        "name": "Value",
         "type": "string",
         "default": ""
       }
