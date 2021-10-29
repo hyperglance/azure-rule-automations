@@ -57,7 +57,18 @@
             "resourceTypes": [
                 "Virtual Machine"
             ],
-            "params": [],
+            "params": [
+                {
+                    "name": "Key",
+                    "type": "string",
+                    "default": ""
+                },
+                {
+                    "name": "Value",
+                    "type": "string",
+                    "default": ""
+                }
+            ],
             "permissions": []
         },
         {
@@ -67,7 +78,13 @@
             "resourceTypes": [
                 "Virtual Machine"
             ],
-            "params": [],
+            "params": [
+                {
+                    "name": "Key",
+                    "type": "string",
+                    "default": ""
+                }
+            ],
             "permissions": []
         },
         {
@@ -77,7 +94,18 @@
             "resourceTypes": [
                 "Virtual Machine"
             ],
-            "params": [],
+            "params": [
+                {
+                    "name": "Old Key",
+                    "type": "string",
+                    "default": ""
+                },
+                {
+                    "name": "New Key",
+                    "type": "string",
+                    "default": ""
+                }
+            ],
             "permissions": []
         }
     ]
