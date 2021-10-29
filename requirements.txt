@@ -6,5 +6,6 @@ azure-functions
 azure-identity
 azure-mgmt-core
 azure-mgmt-compute
+azure-mgmt-resource
 azure-storage-blob
 msrestazure

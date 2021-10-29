@@ -32,7 +32,7 @@ def process_event(automation_data, outputs):
         ## Dynamically load the module that will handle this automation
         try:
             automation_to_execute = importlib.import_module(
-                "".join(["hyperglance_automations.", "actions.", automation_name])
+                "".join(["hyperglance_automations", "actions.", automation_name])
             )
         except Exception as e:
             msg = "Unable to find or load an automation called: %s" % automation_name

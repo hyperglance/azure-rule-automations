@@ -3,6 +3,7 @@ import json
 import hyperglance_automations.processing as processing
 import hyperglance_automations.storage_utils as storage
 
+
 def main(eventBlob: func.InputStream):
     payload = json.loads(eventBlob.read().decode('utf-8'))
     outputs = []
