@@ -12,7 +12,7 @@ def list_subscriptions(csv: pathlib.PurePath) -> dict:
         print('there was a problem parsing the list of subscriptions, returning an empty map')
         return {}
     result = subprocess.run(
-        ['bash', '-c', 'az account list'] if os.name == 'posix' else ['cmd', 'az account list'],
+        ['bash', '-c', 'az account list'] if os.name == 'posix' else ['cmd', '/C az account list'],
         stdout=subprocess.PIPE)
     try:
         az_response = json.loads(result.stdout)
