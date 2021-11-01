@@ -1,8 +1,8 @@
+
 # We strongly recommend using the required_providers block to set the
 # Azure Provider source and version being used
 terraform {
   required_version = ">= 0.13.6"
-
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -10,8 +10,7 @@ terraform {
     }
   }
 }
-
-# Configure the Microsoft Azure Provider
+# Configure the Microsoft Azure (Default) Provider
 provider "azurerm" {
   features {}
 }

@@ -12,6 +12,7 @@ Before you can deploy automations you will need:
 1. Terraform CLI - [Install instructions](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 2. Azure CLI - [Install instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 3. Func CLI - [Install instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local)
+4. A Python (3) Interpreter
 
 ### Azure role assignments
 
@@ -56,7 +57,19 @@ The account under which Hyperglance run needs to be able to write to the Storage
 	MySubscription, AnotherSubscriptionOfMine, ...
 	```
 
-5. Deploy the stack:
+5a (_Optional_).  To use the automations accross __multiple subscriptions__, generate the correct terraform configuration for your environment. 
+ 
+	_Windows_
+	```
+	py -3 provision.py
+	```
+
+	_Unix_	
+	```
+	python3 provision.py
+	```
+
+5b. Deploy the stack:
 	> Terraform will prompt for the region you wish to deploy to and for final confirmation.
 	```
 	 terraform init
