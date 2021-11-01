@@ -148,7 +148,9 @@ resource "azurerm_role_definition" "hyperglance-automations-role" {
 
   permissions {
     actions     = [
-      "Microsoft.Compute/images/delete"
+      "Microsoft.Compute/images/delete",
+      "Microsoft.Resources/tags/read",
+      "Microsoft.Resources/tags/write",
     ]
     not_actions = []
   }

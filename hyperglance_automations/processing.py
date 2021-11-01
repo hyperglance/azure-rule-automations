@@ -1,8 +1,10 @@
 import importlib
+import logging
 import azure.identity as identity
 from msrestazure.azure_cloud import *
 import os
 
+logger = logging.getLogger()
 
 def process_event(automation_data, outputs):
     #  TODO on a subscription (per group of subscriptions) basis when resources from hyper backend
@@ -32,9 +34,10 @@ def process_event(automation_data, outputs):
         ## Dynamically load the module that will handle this automation
         try:
             automation_to_execute = importlib.import_module(
-                "".join(["hyperglance_automations", "actions.", automation_name])
+                "".join(["hyperglance_automations.", "actions.", automation_name])
             )
         except Exception as e:
+            logger.info(e)
             msg = "Unable to find or load an automation called: %s" % automation_name
             automation["critical_error"] = msg
             return
@@ -49,6 +52,7 @@ def process_event(automation_data, outputs):
                 automation["processed"].append(resource)
 
             except Exception as err:
+                logger.info(err)
                 resource["error"] = str(err)  # augment resource with an error field
                 automation["errored"].append(resource)
 
