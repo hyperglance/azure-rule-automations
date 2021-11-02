@@ -1,0 +1,21 @@
+{
+    "name" : "adhoc-automation-run",
+    "results" : [ {
+      "automation" : {
+        "name" : ""
+      },
+      "entities" : [ {
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "",
+        "attributes" : {
+        },
+        "subscription" : "",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      } ],
+      "entityType" : ""
+    } ]
+  }
