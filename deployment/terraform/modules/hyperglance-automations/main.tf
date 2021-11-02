@@ -97,16 +97,6 @@ locals {
 data "azurerm_subscription" "primary" {
 }
 
-data "external" "hyperglance-permissions"{
-      program = try(local.is-windows ? ["py", "-3", var.generate-permissions-script] : ["python3", var.generate-permissions-script], ["python3", var.generate-permissions-script])
-}
-
-resource "null_resource" "generate-hyperglance-json"{
-  provisioner "local-exec" {
-    command = try(local.is-windows ? "py -3 ${var.generate-automations-script}" : "python3 ${var.generate-automations-script}", "python3 ${var.generate-automations-script}")
-  }
-}
-
 #### Permissions ####
 
 module "hyperglance-x-sub" {
@@ -122,33 +112,6 @@ resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contrib
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
 }
-
-
-# Give function access to control VMs in current subscription
-# Create a new role assignment for each subscription
-resource "azurerm_role_assignment" "hyperglance-automations-role-assignment" {
-   scope                = data.azurerm_subscription.primary.id
-   role_definition_id   = azurerm_role_definition.hyperglance-automations-role.role_definition_resource_id
-   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
-}
-
-resource "azurerm_role_definition" "hyperglance-automations-role" {
-  name        = random_pet.hyperglance-automations-name.id
-  scope       = data.azurerm_subscription.primary.id
-
-  permissions {
-    actions     = [
-      "Microsoft.Compute/images/delete",
-      "Microsoft.Resources/tags/read",
-      "Microsoft.Resources/tags/write",
-    ]
-    not_actions = []
-  }
-
-}
-
-
-
 
 
 
