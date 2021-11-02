@@ -29,3 +29,15 @@ variable "app_scale_limit" {
   description = "Maximum number of workers that can be allocated to the function"
   default = 5
 }
+
+variable "generate-permissions-script" {
+  type = string
+  description = "The path of the script which generates the required permissions for the hyperglance role"
+  default = "../../metadata/generate_permissions.py"
+}
+
+variable "generate-automations-script" {
+  type = string
+  description = "The path of the script which generates the HyperglanceAutomations.json"
+  default = "../../metadata/generate_automations_json.py"
+}

@@ -97,6 +97,16 @@ locals {
 data "azurerm_subscription" "primary" {
 }
 
+data "external" "hyperglance-permissions"{
+      program = try(local.is-windows ? ["py", "-3", var.generate-permissions-script] : ["python3", var.generate-permissions-script], ["python3", var.generate-permissions-script])
+}
+
+resource "null_resource" "generate-hyperglance-json"{
+  provisioner "local-exec" {
+    command = try(local.is-windows ? "py -3 ${var.generate-automations-script}" : "python3 ${var.generate-automations-script}", "python3 ${var.generate-automations-script}")
+  }
+}
+
 #### Permissions ####
 
 module "hyperglance-x-sub" {
