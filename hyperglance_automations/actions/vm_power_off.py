@@ -8,8 +8,8 @@ def hyperglance_automation(credential, resource: dict, cloud: Cloud, automation_
 
 def info() -> dict:
   INFO = {
-    "displayName": "Stop VM",
-    "description": "Stops (Pauses) a Virtual Machine. Charges are still incurred for allocated resources such as IP addresses",
+    "displayName": "Power Off",
+    "description": "Powers Off (Pauses) a Virtual Machine. Charges are still incurred for allocated resources such as IP addresses",
     "resourceTypes": [
       "Virtual Machine"
     ],
@@ -17,6 +17,7 @@ def info() -> dict:
 
     ],
     "permissions": [
+      "Microsoft.Compute/virtualMachines/powerOff/action"
     ]
   }
 

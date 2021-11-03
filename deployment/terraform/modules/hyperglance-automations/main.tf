@@ -72,6 +72,7 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   tags = var.tags
 }
 
+
 # Create storage container for Hyperglance function
 resource "azurerm_storage_container" "hyperglance-automations-storage-container" {
   name                  = "hyperglance-automations"
@@ -128,7 +129,13 @@ resource "azurerm_role_definition" "hyperglance-automations-role" {
 
   permissions {
     actions     = [
-      "Microsoft.Compute/disks/delete"
+      "Microsoft.Compute/disks/delete",
+      "Microsoft.Compute/sshPublicKeys/delete",
+      "Microsoft.Network/networkInterfaces/delete",
+      "Microsoft.Network/publicIPAddresses/delete",
+      "Microsoft.Compute/virtualMachines/deallocate/action",
+      "Microsoft.Compute/virtualMachines/start/action",
+      "Microsoft.Compute/virtualMachines/powerOff/action"
     ]
     not_actions = []
   }

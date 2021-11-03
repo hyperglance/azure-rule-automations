@@ -17,7 +17,7 @@ def info() -> dict:
 
     ],
     "permissions": [ 
-
+      "Microsoft.Compute/sshPublicKeys/delete"
     ]
   }
 

@@ -17,6 +17,7 @@ def info() -> dict:
 
     ],
     "permissions": [ 
+      "Microsoft.Compute/virtualMachines/start/action"
     ]
   }
 

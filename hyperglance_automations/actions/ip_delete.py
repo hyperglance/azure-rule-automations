@@ -17,7 +17,7 @@ def info() -> dict:
 
     ],
     "permissions": [ 
-      
+      "Microsoft.Network/publicIPAddresses/delete"
     ]
   }
 

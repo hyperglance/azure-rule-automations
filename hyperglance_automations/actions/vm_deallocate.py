@@ -17,6 +17,8 @@ def info() -> dict:
 
     ],
     "permissions": [
+      "Microsoft.Compute/virtualMachines/deallocate/action",
+      
     ]
   }
 
