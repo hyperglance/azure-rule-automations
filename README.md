@@ -45,36 +45,36 @@ The account under which Hyperglance run needs to be able to write to the Storage
 	 git clone https://github.com/hyperglance/azure-rule-automations.git
 	```
 
-4.  Navigate to the terraform deployment directory 
+4. _[optional]_
+
+	Navigate to the terraform deployment directory
 	
-	```
-	cd azure-rule-automations/deployment/terraform/automations
-    ```
+	`cd azure-rule-automations/deployment/terraform/automations`
+    
 
-	Create a a file ```subscriptions.csv``` with the subscriptions you want to act on separated by a comma.
+	 Create a a file subscriptions.csv with the subscriptions you want to act on separated by a comma.
 
-	```
-	MySubscription, AnotherSubscriptionOfMine, ...
-	```
+	
+	`MySubscription, AnotherSubscriptionOfMine, ...`
+	
 
-5a (_Optional_).  To use the automations accross __multiple subscriptions__, generate the correct terraform configuration for your environment. 
+  	To use the automations accross __multiple subscriptions__, generate the correct terraform configuration for your environment. 
  
-	_Windows_
-	```
-	py -3 provision.py
-	```
+ 	__Windows__
+	
+	`py -3 provision.py`
+	
 
-	_Unix_	
-	```
-	python3 provision.py
-	```
+	__Unix__	
+	
+	`python3 provision.py`
 
-5b. Deploy the stack:
-	> Terraform will prompt for the region you wish to deploy to and for final confirmation.
+	Deploy the stack:
 	```
-	 terraform init
-	 terraform apply
-	```
+	terraform init
+	terraform apply
+	 ```
+	
 
 6. Once complete, the storage account ID and  will be returned:
 	```bash
