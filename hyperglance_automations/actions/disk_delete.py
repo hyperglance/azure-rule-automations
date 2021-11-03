@@ -9,15 +9,15 @@ def hyperglance_automation(credential, resource: dict, cloud = Cloud, automation
 def info() -> dict:
   INFO = {
     "displayName": "Delete Disk",
-    "description": "Delete a disk",
+    "description": "Deletes a disk. Disks attached to Virtual Machines will not be deleted - these must be detached first",
     "resourceTypes": [
       "Disk"
     ],
     "params": [
 
     ],
-    "roles": [ 
-      ""
+    "permissions": [ 
+      "Microsoft.Compute/disks/delete",
     ]
   }
 

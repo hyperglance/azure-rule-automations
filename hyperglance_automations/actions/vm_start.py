@@ -16,8 +16,8 @@ def info() -> dict:
     "params": [
 
     ],
-    "roles": [ 
-      "Virtual Machine Contributor"
+    "permissions": [ 
+      "Microsoft.Compute/virtualMachines/start/action"
     ]
   }
 

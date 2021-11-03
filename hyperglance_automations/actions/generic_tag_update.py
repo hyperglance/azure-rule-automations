@@ -36,7 +36,9 @@ def info() -> dict:
         "default": ""
       }
     ],
-    "roles": [
+    "permissions": [
+      "Microsoft.Resources/tags/read",
+      "Microsoft.Resources/tags/write"
     ]
   }
 
