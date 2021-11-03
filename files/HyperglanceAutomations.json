@@ -107,6 +107,46 @@
                 }
             ],
             "permissions": []
+        },
+        {
+            "name": "nic_delete",
+            "displayName": "Delete NIC",
+            "description": "Delete network interface",
+            "resourceTypes": [
+                "Network Interface"
+            ],
+            "params": [],
+            "permissions": []
+        },
+        {
+            "name": "ip_delete",
+            "displayName": "Delete public IP address",
+            "description": "Delete a public IP address",
+            "resourceTypes": [
+                "Public IP Address"
+            ],
+            "params": [],
+            "permissions": []
+        },
+        {
+            "name": "disk_delete",
+            "displayName": "Delete Disk",
+            "description": "delete a disk",
+            "resourceTypes": [
+                "Disk"
+            ],
+            "params": [],
+            "permissions": []
+        },
+        {
+            "name": "ssh_public_key_delete",
+            "displayName": "Delete SSH Public Key",
+            "description": "Deletes a ssh public key",
+            "resourceTypes": [
+                "SSH Public Key"
+            ],
+            "params": [],
+            "permissions": []
         }
     ]
 }
