@@ -9,7 +9,7 @@ def hyperglance_automation(credential, resource: dict, cloud = Cloud, automation
 def info() -> dict:
   INFO = {
     "displayName": "Delete Public Key",
-    "description": "Delete an SSH public key",
+    "description": "Delete a SSH public key",
     "resourceTypes": [
       "SSH Public Key"
     ],
