@@ -9,14 +9,14 @@ def hyperglance_automation(credential, resource: dict, cloud = Cloud, automation
 def info() -> dict:
   INFO = {
     "displayName": "Delete Public IP",
-    "description": "Deletes a public IP address",
+    "description": "Deletes a public IP address. The IP Address must not be allocated to any resources",
     "resourceTypes": [
       "Public IP Address"
     ],
     "params": [
 
     ],
-    "roles": [ 
+    "permissions": [ 
       
     ]
   }

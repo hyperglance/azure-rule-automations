@@ -30,7 +30,7 @@ def info() -> dict:
         "default": ""
       }
     ],
-    "roles": [
+    "permissions": [
       
     ]
   }

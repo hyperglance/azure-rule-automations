@@ -13,14 +13,14 @@ def hyperglance_automation(credential, resource: dict, cloud = Cloud, automation
 def info() -> dict:
   INFO = {
     "displayName": "Delete NIC",
-    "description": "Deletes a network interface",
+    "description": "Deletes a Network Interface. Network Interfaces which are attached to a Virtual Machine will not be delete - these must be detached first",
     "resourceTypes": [
       "Network Interface"
     ],
     "params": [
 
     ],
-    "roles": [ 
+    "permissions": [ 
       
     ]
   }

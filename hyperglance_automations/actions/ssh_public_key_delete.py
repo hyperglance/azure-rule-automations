@@ -16,7 +16,7 @@ def info() -> dict:
     "params": [
 
     ],
-    "roles": [ 
+    "permissions": [ 
 
     ]
   }

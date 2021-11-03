@@ -16,8 +16,7 @@ def info() -> dict:
     "params": [
 
     ],
-    "roles": [
-      "Virtual Machine Contributor"
+    "permissions": [
     ]
   }
 
