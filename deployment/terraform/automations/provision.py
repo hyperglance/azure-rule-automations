@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 def generate_providers(subscriptions: list):
-    print(Path(__file__).parents[1].absolute())
+    print(__file__)
     return
     #.joinpath('modules', 'hyperglance-x-sub', 'provider.tf')
     file_contents = ""
