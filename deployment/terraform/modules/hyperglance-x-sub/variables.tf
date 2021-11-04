@@ -12,3 +12,8 @@ variable "primary-subscription" {
   type = string
   description = "The Id of the primary subscription"
 }
+
+variable "permissions" {
+  type = list(string)
+  description = "List containing the permissions required for the Hyperglance role"
+}

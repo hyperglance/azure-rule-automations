@@ -109,6 +109,7 @@ module "hyperglance-x-sub" {
   function-principal-id = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
   hyperglance-name = random_pet.hyperglance-automations-name.id
   primary-subscription = data.azurerm_subscription.primary.id
+  permissions = keys(data.external.permissions.result)
 }
 
 # Give function access to write to storage account
