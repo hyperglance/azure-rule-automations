@@ -104,6 +104,57 @@ The account under which Hyperglance run needs to be able to write to the Storage
 8. __That's it - Automations are now enabled against this subscription!__
 	* Within Hyperglance click on any rule or visit the Advanced Search page to start exploring automations features.
 
+# Keeping The Deployment Up-To-Date
+
+Note: When you first ran terraform apply Terraform created a tfstate file in the local directory to track the resources it created. In order to update the existing deployment you need that tfstate file to be in the deployment/terraform/automations directory.
+
+_To update your deployment you will need to:_
+
+ * Pull the latest updates from git 
+	```
+    cd aws-rule-automations
+    git pull
+	```
+
+* Make sure you are logged into Azure 
+	```
+	az account list
+	```
+	which should return a list of subscriptions the Active Directory App has access to, resembling
+
+	```
+	{
+    	"cloudName": "AzureCloud",
+    	"homeTenantId": "",
+    	"id": "",
+    	"isDefault": ,
+    	"managedByTenants": [],
+    	"name": "",
+    	"state": "",
+    	"tenantId": "",
+    	"user": {
+      	"name": "",
+      	"type": ""
+    }
+	```
+
+	If this command does not work, try
+	```
+	az login
+	```
+
+* Navigate to the deployment directory
+    ```
+	cd deployment/terraform/automations
+	```
+	and make deploy the new configuration
+	```
+    terraform apply
+	```
+Terraform will apply any updates to the cloud resources it already created.
+
+It is a good idea to also update the Hyperglance application at the same time.
+
 # Azure Government
 
 To deploy Hyperglance automations to Azure Government a couple of extra steps must be taken.

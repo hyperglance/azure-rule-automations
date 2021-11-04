@@ -38,9 +38,7 @@ resource "azurerm_role_definition" "hyperglance-automations-role-{sub}" {{
   assignable_scopes = ["${{var.primary-subscription}}", "/subscriptions/{sub}"]
 
   permissions {{
-    actions     = [
-      "Microsoft.Compute/images/delete"
-    ]
+    actions     = var.permissions
     not_actions = []
   }}
 
