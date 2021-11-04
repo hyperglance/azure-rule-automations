@@ -1,8 +1,6 @@
-from msrestazure.azure_cloud import Cloud
-from azure.mgmt.resource.resources import ResourceManagementClient
+def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
+  from azure.mgmt.resource.resources import ResourceManagementClient
 
-
-def hyperglance_automation(credential, resource: dict, cloud:Cloud, automation_params = ''):
   url = cloud.endpoints.resource_manager
   client = ResourceManagementClient(
       credential,
