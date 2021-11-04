@@ -3,7 +3,9 @@ import sys
 from pathlib import Path
 
 def generate_providers(subscriptions: list):
-    provider_file = Path(__file__).parents[1].absolute().joinpath('modules', 'hyperglance-x-sub', 'provider.tf')
+    print(Path(__file__).parents[1].absolute())
+    return
+    #.joinpath('modules', 'hyperglance-x-sub', 'provider.tf')
     file_contents = ""
     for subscription in subscriptions:
         file_contents += \
@@ -38,9 +40,7 @@ resource "azurerm_role_definition" "hyperglance-automations-role-{sub}" {{
   assignable_scopes = ["${{var.primary-subscription}}", "/subscriptions/{sub}"]
 
   permissions {{
-    actions     = [
-      "Microsoft.Compute/images/delete"
-    ]
+    actions     = var.permissions
     not_actions = []
   }}
 
