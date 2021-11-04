@@ -32,6 +32,6 @@ def fetch_permissions_list(automations_root) -> dict:
     return permissions
 
 if __name__ == '__main__':
-  root = str(pathlib.Path(__file__).resolve().parents[6])
+  root = str(pathlib.Path(__file__).resolve().parents[2])
   sys.path.append(root)
   print(json.dumps(fetch_permissions_list(root)))
