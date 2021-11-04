@@ -20,7 +20,13 @@ variable "region" {
 
 variable "utilised-subscriptions-script" {
   type = string
-  description = "location of the script which parses subscriptions.csv"
+  description = "Location of the script which parses subscriptions.csv"
+}
+
+variable "generate-permissions-script" {
+  type = string
+  description = "Location of the script which generates the permissions for the hyperglance role"
+  default = "../../metadata/generate_permissions.py"
 }
 
 # Cap the number of workers that can be allocated to the function

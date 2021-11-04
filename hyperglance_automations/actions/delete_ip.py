@@ -15,8 +15,8 @@ def info() -> dict:
     "params": [
 
     ],
-    "roles": [ 
-      
+    "permissions": [ 
+       "Microsoft.Network/publicIPAddresses/delete"
     ]
   }
 

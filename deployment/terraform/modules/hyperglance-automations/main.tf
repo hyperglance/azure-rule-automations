@@ -94,6 +94,10 @@ locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
 }
 
+data "external" "permissions" {
+    program = local.is-windows ? ["py", "-3", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
+}
+
 # Get current subscription ID
 data "azurerm_subscription" "primary" {
 }
@@ -128,18 +132,7 @@ resource "azurerm_role_definition" "hyperglance-automations-role" {
   scope       = data.azurerm_subscription.primary.id
 
   permissions {
-    actions     = [
-      "Microsoft.Compute/disks/delete",
-      "Microsoft.Compute/sshPublicKeys/delete",
-      "Microsoft.Network/networkInterfaces/delete",
-      "Microsoft.Network/publicIPAddresses/delete",
-      "Microsoft.Compute/virtualMachines/deallocate/action",
-      "Microsoft.Compute/virtualMachines/start/action",
-      "Microsoft.Compute/virtualMachines/powerOff/action",
-      "Microsoft.Compute/virtualMachines/delete",
-      "Microsoft.Resources/tags/read",
-      "Microsoft.Resources/tags/write"
-    ]
+    actions     = keys(data.external.permissions.result)
     not_actions = []
   }
 
