@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 def generate_providers(subscriptions: list):
-    provider_file = Path(__file__).parents[1].joinpath('modules', 'hyperglance-x-sub', 'provider.tf')
+    provider_file = Path(__file__).resolve().parents[1].joinpath('modules', 'hyperglance-x-sub', 'provider.tf')
     file_contents = ""
     for subscription in subscriptions:
         file_contents += \
@@ -18,7 +18,7 @@ provider "azurerm" {{
         file.write(file_contents)
 
 def generate_main(subscriptions: list):
-  main_file = Path(__file__).parents[1].joinpath('modules', 'hyperglance-x-sub', 'main.tf')
+  main_file = Path(__file__).resolve().parents[1].joinpath('modules', 'hyperglance-x-sub', 'main.tf')
   file_contents = ""
   for subscription in subscriptions:
     file_contents += \
