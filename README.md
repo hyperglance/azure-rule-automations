@@ -151,6 +151,12 @@ _To update your deployment you will need to:_
 	```
     terraform apply
 	```
+
+* Upload the function code to Azure - the command is the `func-command` output from the Terraform deployment and should resemble
+	```
+	cd <function-root>  (Ex. C:\Users\name\azure-rule-automations)
+	func azure functionapp publish hyperglance-automations-random-pet
+	```
 Terraform will apply any updates to the cloud resources it already created.
 
 It is a good idea to also update the Hyperglance application at the same time.
