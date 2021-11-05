@@ -18,12 +18,6 @@ variable "region" {
   default = "East US"
 }
 
-variable "utilised-subscriptions-script" {
-  type = string
-  description = "Location of the script which parses subscriptions.csv"
-  default = "../../metadata/parse_subscriptions.py"
-}
-
 variable "compress-code-script" {
   type = string
   description = "Location of the script which compresses hyperglance_automations function code and generates a sha256 digest"

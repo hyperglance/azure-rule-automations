@@ -70,7 +70,6 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   app_settings = {
     hyperglanceautomations_STORAGE = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
     AzureWebJobsDisableHomepage    = true
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
     ENABLE_ORYX_BUILD              = true
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
     FUNCTIONS_WORKER_RUNTIME       = "python"
@@ -115,7 +114,8 @@ locals {
 }
 
 data "external" "compress-function-code" {
-     program = local.is-windows ? ["py", "-3", var.compress-code-script, "hyperglance_automations"] : ["python3", var.compress-code-script, "hyperglance_automations"]
+    program = local.is-windows ? ["py", "-3", var.compress-code-script, "hyperglance_automations"] : ["python3", var.compress-code-script, "hyperglance_automations"]
+    depends_on = [null_resource.download-requirements]
 }
 
 data "external" "permissions" {
@@ -124,6 +124,12 @@ data "external" "permissions" {
 
 data "external" "generate-automations-json"{
     program = local.is-windows ? ["py", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
+}
+
+resource "null_resource" "download-requirements" {
+  provisioner "local-exec" {
+    command = "pip install --target=\"../../../.python_packages/lib/site-packages\" -r ../../../requirements.txt"
+  }
 }
 
 # Get current subscription ID
