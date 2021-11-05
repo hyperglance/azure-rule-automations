@@ -95,7 +95,13 @@ locals {
 }
 
 data "external" "permissions" {
-    program = local.is-windows ? ["py", "-3", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
+    program = local.is-windows ? ["py", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
+}
+
+resource "null_resource" "json-generation"{
+    provisioner "local-exec" {
+          command = local.is-windows ? "py ${var.generate-hyperglance-json-script}" : "python3 ${var.generate-hyperglance-json-script}"
+    }
 }
 
 # Get current subscription ID

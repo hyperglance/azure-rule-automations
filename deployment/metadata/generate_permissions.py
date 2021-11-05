@@ -1,6 +1,6 @@
 """Get the aggregated permissions required to run all automations
 
-Returns list (json) of all required permissions
+Returns a list of all required permissions
 """
 
 import importlib
