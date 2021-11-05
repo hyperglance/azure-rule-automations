@@ -93,7 +93,8 @@ resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
   storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
   type                   = "Block"
   source                 = "${path.module}/../../../../files/HyperglanceAutomations.json"
-  content_md5            = filemd5("${path.module}/../../../../files/HyperglanceAutomations.json")
+  content_md5            = filemd5(keys(data.external.generate-automations-json.result)[0])
+
 }
 
 locals {
@@ -101,7 +102,11 @@ locals {
 }
 
 data "external" "permissions" {
-    program = local.is-windows ? ["py", "-3", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
+    program = local.is-windows ? ["py", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
+}
+
+data "external" "generate-automations-json"{
+    program = local.is-windows ? ["py", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
 }
 
 # Get current subscription ID
