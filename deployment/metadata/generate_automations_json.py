@@ -28,3 +28,4 @@ if __name__ == '__main__':
     sys.path.append(str(automations_root.absolute()))
     with open(automations_file, 'w') as file:
       file.write(generate_json(automations_root))
+    print(json.dumps({str(automations_file) : str(automations_file)}))
