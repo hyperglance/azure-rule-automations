@@ -22,6 +22,7 @@ resource "azurerm_resource_group" "hyperglance-automations-resource-group" {
 }
 
 # Create storage account
+#tfsec:ignore:azure-storage-default-action-deny
 resource "azurerm_storage_account" "hyperglance-automations-storage-account" {
   name                     = random_string.hyperglance-automations-storage-account-name.id
   resource_group_name      = azurerm_resource_group.hyperglance-automations-resource-group.name
@@ -29,6 +30,7 @@ resource "azurerm_storage_account" "hyperglance-automations-storage-account" {
   account_tier             = "Standard"
   account_replication_type = "ZRS"
   tags                     = var.tags
+  min_tls_version          = "TLS1_2"
 }
 
 # Create a service plan for function to be assigned to
@@ -60,6 +62,10 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   }
   site_config {
     app_scale_limit = var.app_scale_limit
+    http2_enabled = true
+  }
+  auth_settings {
+    enabled = true
   }
   app_settings = {
     hyperglanceautomations_STORAGE = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
@@ -76,13 +82,6 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   tags = var.tags
 }
 
-# Enable application insights for function
-resource "azurerm_application_insights" "hyperglance-automations-application-insights" {
-  name                = random_pet.hyperglance-automations-name.id
-  location            = azurerm_resource_group.hyperglance-automations-resource-group.location
-  resource_group_name = azurerm_resource_group.hyperglance-automations-resource-group.name
-  application_type    = "other"
-}
 
 # Create storage container for Hyperglance function
 resource "azurerm_storage_container" "hyperglance-automations-storage-container" {
@@ -98,6 +97,8 @@ resource "azurerm_storage_blob" "hyperglance-automations-json-blob" {
   storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
   type                   = "Block"
   source                 = "${path.module}/../../../../files/HyperglanceAutomations.json"
+  content_md5            = filemd5(keys(data.external.generate-automations-json.result)[0])
+
 }
 
 # Upload the function code to a blob for deployment
@@ -117,22 +118,26 @@ data "external" "compress-function-code" {
      program = local.is-windows ? ["py", "-3", var.compress-code-script, "hyperglance_automations"] : ["python3", var.compress-code-script, "hyperglance_automations"]
 }
 
-
-# Get the utilised subscriptions from the subscriptions.csv
-data "external" "utilised-subscriptions" {
-    program = local.is-windows ? ["py", "-3", var.utilised-subscriptions-script] : ["python3", var.utilised-subscriptions-script]
+data "external" "permissions" {
+    program = local.is-windows ? ["py", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
 }
 
-# Get the id of all of the subscriptions that are in subscriptions.csv and that we have access to
-data "azurerm_subscriptions" "available-subscriptions" {
-    for_each = toset(keys(data.external.utilised-subscriptions.result))
-    display_name_prefix = each.value
+data "external" "generate-automations-json"{
+    program = local.is-windows ? ["py", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
+}
+
+# Get current subscription ID
+data "azurerm_subscription" "primary" {
 }
 
 #### Permissions ####
 
-# Get current subscription ID
-data "azurerm_subscription" "primary" {
+module "hyperglance-x-sub" {
+  source = "../hyperglance-x-sub"
+  function-principal-id = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
+  hyperglance-name = random_pet.hyperglance-automations-name.id
+  primary-subscription = data.azurerm_subscription.primary.id
+  permissions = keys(data.external.permissions.result)
 }
 
 # Give function access to write to storage account
@@ -142,18 +147,28 @@ resource "azurerm_role_assignment" "hyperglance-automations-storage-blob-contrib
   principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
 }
 
+
 # Give function access to control VMs in current subscription
 # Create a new role assignment for each subscription
-resource "azurerm_role_assignment" "hyperglance-automations-x-subscription-virtual-machine-contributor" {
-   for_each = toset([for subscription in data.azurerm_subscriptions.available-subscriptions: subscription.subscriptions[0].id if length(subscription.subscriptions) != 0])
-   scope                = each.key
-   role_definition_name = "Virtual Machine Contributor"
+resource "azurerm_role_assignment" "hyperglance-automations-role-assignment" {
+   scope                = data.azurerm_subscription.primary.id
+   role_definition_id   = azurerm_role_definition.hyperglance-automations-role.role_definition_resource_id
    principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
- }
-
-# Always give these perms for the current account
-resource "azurerm_role_assignment" "hyperglance-automations-virtual-machine-contributor" {
-  scope                = data.azurerm_subscription.primary.id
-  role_definition_name = "Virtual Machine Contributor"
-  principal_id         = azurerm_function_app.hyperglance-automations-app.identity.0.principal_id
 }
+
+resource "azurerm_role_definition" "hyperglance-automations-role" {
+  name        = random_pet.hyperglance-automations-name.id
+  scope       = data.azurerm_subscription.primary.id
+
+  permissions {
+    actions     = keys(data.external.permissions.result)
+    not_actions = []
+  }
+
+}
+
+
+
+
+
+

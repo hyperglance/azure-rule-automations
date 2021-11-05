@@ -1,10 +1,24 @@
 import importlib
 import logging
+import azure.identity as identity
+from msrestazure.azure_cloud import *
+import os
 
 logger = logging.getLogger()
 
-
-def process_event(credential, automation_data, outputs):
+def process_event(automation_data, outputs):
+    #  TODO on a subscription (per group of subscriptions) basis when resources from hyper backend
+    # 1. Have Environment user facing metadata
+    # 2. Are grouped per subscription
+    if('core.windows.net' in os.environ["hyperglanceautomations_STORAGE"]):
+        cloud = AZURE_PUBLIC_CLOUD
+    else:
+        cloud = AZURE_US_GOV_CLOUD
+    
+    # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
+    # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
+    # or identity (Function App -> Identity) must be used to authenticate.
+    credential = identity.DefaultAzureCredential(environment=cloud.endpoints.active_directory)    
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -17,13 +31,13 @@ def process_event(credential, automation_data, outputs):
         automation["errored"] = []
         automation["critical_error"] = None
         outputs.append(automation)
-
         ## Dynamically load the module that will handle this automation
         try:
             automation_to_execute = importlib.import_module(
                 "".join(["hyperglance_automations.", "actions.", automation_name])
             )
         except Exception as e:
+            logger.info(e)
             msg = "Unable to find or load an automation called: %s" % automation_name
             automation["critical_error"] = msg
             return
@@ -33,11 +47,12 @@ def process_event(credential, automation_data, outputs):
             try:
                 action_params = automation.get("params", {})
                 automation_to_execute.hyperglance_automation(
-                    credential, resource, action_params
+                    credential, resource, cloud, action_params
                 )
                 automation["processed"].append(resource)
 
             except Exception as err:
+                logger.info(err)
                 resource["error"] = str(err)  # augment resource with an error field
                 automation["errored"].append(resource)
 

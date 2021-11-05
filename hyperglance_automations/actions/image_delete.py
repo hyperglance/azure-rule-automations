@@ -3,20 +3,21 @@ def hyperglance_automation(credential, resource: dict, cloud, automation_params 
   
   url = cloud.endpoints.resource_manager
   client = ComputeManagementClient(credential, resource['subscription'], base_url=url, credential_scopes=[url + '/.default']) # subscription id
-  client.virtual_machines.begin_start(resource['attributes']['Resource Group'], resource['name']) 
+  client.images.begin_delete(resource['attributes']['Resource Group'], resource['name'])
+
 
 def info() -> dict:
   INFO = {
-    "displayName": "Start VM",
-    "description": "Start a Virtual Machine",
+    "displayName": "Delete Image",
+    "description": "Deletes an Image",
     "resourceTypes": [
-      "Virtual Machine"
+      "Image"
     ],
     "params": [
 
     ],
-    "permissions": [ 
-      "Microsoft.Compute/virtualMachines/start/action"
+    "permissions": [
+      "Microsoft.Compute/images/delete"
     ]
   }
 

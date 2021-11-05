@@ -1,22 +1,22 @@
 def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
   from azure.mgmt.compute import ComputeManagementClient
-  
+
   url = cloud.endpoints.resource_manager
   client = ComputeManagementClient(credential, resource['subscription'], base_url=url, credential_scopes=[url + '/.default']) # subscription id
-  client.virtual_machines.begin_start(resource['attributes']['Resource Group'], resource['name']) 
+  client.ssh_public_keys.delete(resource['attributes']['Resource Group'], resource['name']) 
 
 def info() -> dict:
   INFO = {
-    "displayName": "Start VM",
-    "description": "Start a Virtual Machine",
+    "displayName": "Delete Public Key",
+    "description": "Delete a SSH public key",
     "resourceTypes": [
-      "Virtual Machine"
+      "SSH Public Key"
     ],
     "params": [
 
     ],
     "permissions": [ 
-      "Microsoft.Compute/virtualMachines/start/action"
+      "Microsoft.Compute/sshPublicKeys/delete"
     ]
   }
 

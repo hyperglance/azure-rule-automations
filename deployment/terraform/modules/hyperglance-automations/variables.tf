@@ -30,6 +30,18 @@ variable "compress-code-script" {
   default = "../../metadata/compress_code.py"
 }
 
+variable "generate-permissions-script" {
+  type = string
+  description = "Location of the script which generates the permissions for the hyperglance role"
+  default = "../../metadata/generate_permissions.py"
+}
+
+variable "generate-hyperglance-json-script" {
+  type = string
+  description = "Location of the script which generates the HyperglanceAutomations.json"
+  default = "../../metadata/generate_automations_json.py"
+}
+
 # Cap the number of workers that can be allocated to the function
 variable "app_scale_limit" {
   type = number
