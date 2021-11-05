@@ -22,6 +22,7 @@ resource "azurerm_resource_group" "hyperglance-automations-resource-group" {
 }
 
 # Create storage account
+#tfsec:ignore:azure-storage-default-action-deny
 resource "azurerm_storage_account" "hyperglance-automations-storage-account" {
   name                     = random_string.hyperglance-automations-storage-account-name.id
   resource_group_name      = azurerm_resource_group.hyperglance-automations-resource-group.name
@@ -29,6 +30,7 @@ resource "azurerm_storage_account" "hyperglance-automations-storage-account" {
   account_tier             = "Standard"
   account_replication_type = "ZRS"
   tags                     = var.tags
+  min_tls_version          = "TLS1_2"
 }
 
 # Create a service plan for function to be assigned to
@@ -60,6 +62,10 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   }
   site_config {
     app_scale_limit = var.app_scale_limit
+    http2_enabled = true
+  }
+  auth_settings {
+    enabled = true
   }
   app_settings = {
     "hyperglanceautomations_STORAGE" = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
