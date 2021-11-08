@@ -81,17 +81,15 @@ The account under which Hyperglance run needs to be able to write to the Storage
 
 	Outputs:
 
-    func_command = "func azure functionapp publish hyperglance-automations-legible-buffalo"
     storage_account_resource_id = "/subscriptions/<subscription ID>/resourceGroups/hyperglance-automations-legible-buffalo/providers/Microsoft.Storage/storageAccounts/rii5it09y343"
 	```
  
    *The storage account ID is required to configure automations in Hyperglance*
-   *The func command is required to deploy the function code to the Azure function*
 	
 	Copy the storage account ID into the Hyperglance UI:  __Settings ➔ Automations ➔ Azure ➔ Storage Account Resource ID__
 	or visit this URL: https://your-hyperglance-ip/#/admin/automations
 
-8. __That's it - Automations are now enabled against this subscription!__
+7. __That's it - Automations are now enabled against this subscription!__
 	* Within Hyperglance click on any rule or visit the Advanced Search page to start exploring automations features.
 
 # Keeping The Deployment Up-To-Date
