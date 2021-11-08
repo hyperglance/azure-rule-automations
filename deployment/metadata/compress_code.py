@@ -13,15 +13,15 @@ def zip_code(output: pathlib.Path, to_zip: pathlib.Path):
         return encoder.standard_b64encode(hashlib.sha256(bytes).digest()).decode('utf-8');
 
 def cp_deployment(deployment_root: pathlib.Path, output: pathlib.Path):
-    excluded = ['deployment', 'files', 'LICENSE', 'README.md', '.git', 'SECURITY.md', ]
+    excluded = ['deployment', 'files', 'LICENSE', 'README.md', '.git', 'SECURITY.md' ]
     shutil.rmtree(output, ignore_errors=True)
     os.mkdir(output)
-    for item in deployment_root.iterdir():
+    for item in deployment_root.iterdir() :
         if not any(word in str(item) for word in excluded):
             if item.is_dir():
-                shutil.copytree(item, output + '/' + str(item.name))
+                shutil.copytree(item, os.path.join(output,str(item.name)), ignore=lambda directory, contents: [] if directory == '__pycache__' else contents)
             else:
-                shutil.copy(item, output + '/' + str(item.name))
+                shutil.copy(item,  os.path.join(output,str(item.name)))
 
 if __name__ == '__main__':
     hyperglance_root = pathlib.Path(__file__).resolve().parents[2]
