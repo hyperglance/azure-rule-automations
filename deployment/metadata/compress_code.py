@@ -19,7 +19,7 @@ def cp_deployment(deployment_root: pathlib.Path, output: pathlib.Path):
     for item in deployment_root.iterdir() :
         if not any(word in str(item) for word in excluded):
             if item.is_dir():
-                shutil.copytree(item, os.path.join(output,str(item.name)), ignore=lambda directory, contents: [] if directory == '__pycache__' else contents)
+                shutil.copytree(item, os.path.join(output,str(item.name)), ignore=shutil.ignore_patterns('__pycache__'))
             else:
                 shutil.copy(item,  os.path.join(output,str(item.name)))
 

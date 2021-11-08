@@ -33,7 +33,7 @@ resource "azurerm_role_assignment" "hyperglance-automations-role-assignment-{sub
 
 resource "azurerm_role_definition" "hyperglance-automations-role-{sub}" {{
   provider = azurerm.subscription-{sub}
-  name        = var.hyperglance-name
+  name        = "${{var.hyperglance-name}}-{sub}"
   scope       = "/subscriptions/{sub}"
   assignable_scopes = ["${{var.primary-subscription}}", "/subscriptions/{sub}"]
 
