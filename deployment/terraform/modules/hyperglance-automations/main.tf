@@ -124,9 +124,6 @@ data "external" "permissions" {
 }
 
 data "external" "generate-automations-json"{
-  triggers = {
-    always_run = "${timestamp()}"
-  }
   program = local.is-windows ? ["py", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
 }
 
