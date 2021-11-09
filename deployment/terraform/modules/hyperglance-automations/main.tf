@@ -124,7 +124,10 @@ data "external" "permissions" {
 }
 
 data "external" "generate-automations-json"{
-    program = local.is-windows ? ["py", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+  program = local.is-windows ? ["py", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
 }
 
 resource "null_resource" "download-requirements" {
