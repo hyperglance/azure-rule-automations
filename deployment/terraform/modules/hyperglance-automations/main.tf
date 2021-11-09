@@ -129,7 +129,7 @@ data "external" "generate-automations-json"{
 
 resource "null_resource" "download-requirements" {
   provisioner "local-exec" {
-    command = "pip install --target=../../../.python_packages/lib/site-packages -r ../../../requirements.txt"
+    command = "pip3 install --target=../../../.python_packages/lib/site-packages -r ../../../requirements.txt"
   }
 }
 
