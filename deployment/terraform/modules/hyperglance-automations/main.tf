@@ -120,11 +120,11 @@ data "external" "compress-function-code" {
 }
 
 data "external" "permissions" {
-    program = local.is-windows ? ["py", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
+    program = local.is-windows ? ["py", "-3", var.generate-permissions-script] : ["python3", var.generate-permissions-script]
 }
 
 data "external" "generate-automations-json"{
-  program = local.is-windows ? ["py", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
+  program = local.is-windows ? ["py", "3", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
 }
 
 resource "null_resource" "download-requirements" {
