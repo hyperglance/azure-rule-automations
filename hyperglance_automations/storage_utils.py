@@ -33,7 +33,8 @@ def put_pending_status(prefix: str):
             container="hyperglance-automations",
             blob="".join([prefix, 'is_pending']),
     )
-    blob_client.upload_blob('', overwrite=True)
+    logger.info('putting bob in ' + "".join([prefix, 'is_pending']))
+    blob_client.create_append_blob()
 
 def remove_pending_status(prefix: str):
     blob_service_client = BlobServiceClient.from_connection_string(os.environ["hyperglanceautomations_STORAGE"])

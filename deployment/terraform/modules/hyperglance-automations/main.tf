@@ -72,6 +72,7 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
     AzureWebJobsDisableHomepage    = true
     ENABLE_ORYX_BUILD              = true
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
     FUNCTIONS_WORKER_RUNTIME       = "python"
     BUILD_FLAGS                    = "UseExpressBuild"
     HASH = data.external.compress-function-code.result["HASH"] 
@@ -80,6 +81,14 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   
   tags = var.tags
 }
+
+resource "azurerm_application_insights" "hyperglance-automations-application-insights" {
+ name                = random_pet.hyperglance-automations-name.id
+ location            = azurerm_resource_group.hyperglance-automations-resource-group.location
+ resource_group_name = azurerm_resource_group.hyperglance-automations-resource-group.name
+ application_type    = "other"
+}
+
 
 
 # Create storage container for Hyperglance function
