@@ -125,7 +125,7 @@ data "external" "permissions" {
 
 data "external" "generate-automations-json"{
     program = local.is-windows ? ["py", "-3", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
-
+}
 
 resource "null_resource" "download-requirements" {
   provisioner "local-exec" {
