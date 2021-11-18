@@ -62,7 +62,8 @@ def info() -> dict:
 
     ],
     "permissions": [
-      "Microsoft.Compute/virtualMachines/delete"
+      "Microsoft.Compute/virtualMachines/delete",
+      "Microsoft.Compute/virtualMachines/read"
     ]
   }
 
