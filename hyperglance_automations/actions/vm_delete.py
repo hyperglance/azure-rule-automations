@@ -54,6 +54,9 @@ def info() -> dict:
       "Microsoft.Compute/virtualMachines/delete",
       "Microsoft.Compute/virtualMachines/read",
       "Microsoft.Network/networkInterfaces/read",
+      "Microsoft.Compute/disks/delete",
+      "Microsoft.Network/publicIPAddresses/delete",
+      "Microsoft.Network/networkInterfaces/delete"
 
     ]
   }
