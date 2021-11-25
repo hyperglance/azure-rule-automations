@@ -1,12 +1,18 @@
 import importlib
 import logging
+from time import perf_counter
 import azure.identity as identity
 from msrestazure.azure_cloud import *
 import os
+from pathlib import Path
+import json
 
 logger = logging.getLogger()
 
 def process_event(automation_data, outputs):
+    time_elapsed = 0.0
+    time_limit = get_time_limit()
+
     #  TODO on a subscription (per group of subscriptions) basis when resources from hyper backend
     # 1. Have Environment user facing metadata
     # 2. Are grouped per subscription
@@ -44,6 +50,10 @@ def process_event(automation_data, outputs):
 
         ## For each of Resource, execute the automation
         for resource in resources:
+            if time_elapsed > time_limit:
+                resource["error"] = "The time limit for the action has surpassed. Consider changing your function app service plan"
+                automation['errored'].append(resource)
+            before = perf_counter()
             try:
                 action_params = automation.get("params", {})
                 automation_to_execute.hyperglance_automation(
@@ -55,6 +65,23 @@ def process_event(automation_data, outputs):
                 logger.info(err)
                 resource["error"] = str(err)  # augment resource with an error field
                 automation["errored"].append(resource)
+            finally:
+                time_elapsed += (perf_counter()-before)
+
+def get_time_limit():
+    host_file = Path(__file__).resolve().parents[0].joinpath('host.json')
+    try:
+        with open(host_file) as file:
+            string_value = json.loads(file.read())['functionTimeout']
+        constituents = string_value.split(':')
+        time_limit = (60*60*int(constituents[0]))+(60*int(constituents[1]))+int(constituents[2])
+    except Exception as e:
+        logger.info(e)
+        time_limit = 480 # 8 minutes default value
+    finally:
+       return time_limit - 120 # return the time limit with a 2 minute safty buffer
+
+
 
 
 
