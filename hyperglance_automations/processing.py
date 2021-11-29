@@ -51,8 +51,10 @@ def process_event(automation_data, outputs):
         ## For each of Resource, execute the automation
         for resource in resources:
             if time_elapsed > time_limit:
+                logger.info("time limit exceeded for " + str(resource))
                 resource["error"] = "The time limit for the action has surpassed. Consider changing your function app service plan"
                 automation['errored'].append(resource)
+                continue
             before = perf_counter()
             try:
                 action_params = automation.get("params", {})
