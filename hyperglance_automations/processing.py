@@ -52,7 +52,8 @@ def process_event(automation_data, outputs):
         for resource in resources:
             if time_elapsed > time_limit:
                 logger.info("time limit exceeded for " + str(resource))
-                resource["error"] = "The time limit for the action has surpassed. Consider changing your function app service plan"
+                resource["error"] = \
+                "The time limit for the action has surpassed. Consider changing your function app service plan. https://docs.microsoft.com/en-us/azure/app-service/app-service-plan-manage"
                 automation['errored'].append(resource)
                 continue
             before = perf_counter()
