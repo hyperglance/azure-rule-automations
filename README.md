@@ -12,6 +12,7 @@ Before you can deploy automations you will need:
 1. Terraform CLI - [Install instructions](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 2. Azure CLI - [Install instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 3. A Python (3) Interpreter
+4. PIP - Python Package Installer  `python -m ensurepip` 
 
 ### Azure role assignments
 

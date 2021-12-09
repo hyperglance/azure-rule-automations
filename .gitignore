@@ -94,3 +94,20 @@ subscriptions.csv
 
 # Bitbucket Pipelines config
 bitbucket-piplines.yml
+
+# Ignore all python packages except crypto
+.python_packages/lib/site-packages
+!.python_packages/lib/site-packages/cryptography
+
+# Ignore zip and deployement folder
+deployment/terraform/automations/hyperglance_automations
+deployment/terraform/automations/hyperglance_automations.zip
+
+deployment/terraform/modules/hyperglance-x-sub/provider.tf
+deployment/terraform/modules/hyperglance-x-sub/main.tf
+
+deployment/terraform/automations/terraform 
+deployment/terraform/automations/terraform.exe
+deployment/terraform/automations/terraform/subscriptions.csv
+
+files/HyperglanceAutomations.json
