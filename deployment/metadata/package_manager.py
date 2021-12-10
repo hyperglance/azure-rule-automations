@@ -1,30 +1,26 @@
 
 import json
 from pathlib import Path
+import tarfile
 import requests
 import re
 from wheel_filename import parse_wheel_filename
 import os 
 import shutil
+import importlib
 
-def get_url(package_name) -> str:
+def setup_tars(package_name) -> str:
     url = f'https://pypi.org/pypi/{package_name}/json'
-    accepted_tags = [
-        'manylinux2010_x86_64',
-        'manylinux2014_x86_64',
-        'manylinux_2_17_x86_64', 
-        'manylinux_2_24_x86_64',
-        'any'
-    ]
     raw_content = requests.get(url).content
     data = json.loads(raw_content)['urls']
-    files = {url['filename']: url['url'] for url in data if url['filename'].endswith('.whl')}
-    for tag in accepted_tags:
-        for file in files:
-            item = parse_wheel_filename(file)
-            if tag in item.platform_tags:
-                return files[str(item)]
-    raise Exception('no suitable package versions for the plaform were found')
+    for url in data:
+        if 'tar.gz' in url['url']:
+            fetch_package(url['url'])
+            filename = url['filename']
+            with tarfile.open(f'.tmp/{filename}') as tarf:
+                tarf.extractall('.tmp/')
+            importlib.import_module('.tmp')
+    
 
 def get_requirements() -> list:
     requirements_file = Path(__file__).resolve().parents[2].joinpath('requirements.txt')
@@ -51,7 +47,9 @@ if __name__ == '__main__':
     shutil.rmtree('.tmp', ignore_errors=True)
     os.mkdir('.tmp')
     packages = get_requirements()
-    package_urls = [get_url(package) for package in packages]
-    for url in package_urls:
-        fetch_package(url)
+    for package in packages:
+        setup_tars(package)
+    #print(package_urls)
+    # for url in package_urls:
+    #     fetch_package(url)
 
