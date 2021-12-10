@@ -127,14 +127,9 @@ data "external" "generate-automations-json"{
     program = local.is-windows ? ["py", "-3", var.generate-hyperglance-json-script] : ["python3", var.generate-hyperglance-json-script]
 }
 
-resource "null_resource" "download-requirements" {
-  provisioner "local-exec" {
-    command = "pip3 install --target=../../../.python_packages/lib/site-packages -r ../../../requirements.txt"
-  }
-}
-
 # Get current subscription ID
 data "azurerm_subscription" "primary" {
+
 }
 
 #### Permissions ####
