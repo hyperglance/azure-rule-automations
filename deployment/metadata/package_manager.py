@@ -6,14 +6,26 @@ import re
 from wheel_filename import parse_wheel_filename
 from distutils.version import StrictVersion
 
-def get_urls(package_name) -> list:
+def get_url(package_name) -> str:
     url = f'https://pypi.org/pypi/{package_name}/json'
+    accepted_tags = [
+        'manylinux2010_x86_64',
+        'manylinux2014_x86_64',
+        'manylinux_2_17_x86_64', 
+        'manylinux_2_24_x86_64',
+        'any'
+    ]
     data = json.loads(requests.get(url).content)['urls']
     files = {url['filename']: url['url'] for url in data if url['filename'].endswith('.whl')}
-    parsed = []
-    for file in files:
-        parsed += parse_wheel_filename(file[0])
-    print(files)
+    parsed_items = []
+    for tag in accepted_tags:
+        for file in files:
+            item = parse_wheel_filename(file)
+            if tag in item.platform_tags:
+                print('tag is ' + tag)
+                print('platform tags ' + str(item.platform_tags))
+                return files[str(item)]
+    raise Exception('no suitable package versions for the plaform were found')
 
 def get_requirements() -> list:
     requirements_file = Path(__file__).resolve().parents[2].joinpath('requirements.txt')
@@ -40,5 +52,7 @@ class Package:
 
 
 if __name__ == '__main__':
-    get_urls('cryptography')
+    #print(get_requirements())
+    print(get_url('mypy'))
     #fetch_packages(get_urls(get_requirements))
+
