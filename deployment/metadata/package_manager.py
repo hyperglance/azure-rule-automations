@@ -4,7 +4,8 @@ from pathlib import Path
 import requests
 import re
 from wheel_filename import parse_wheel_filename
-from distutils.version import StrictVersion
+import os 
+import shutil
 
 def get_url(package_name) -> str:
     url = f'https://pypi.org/pypi/{package_name}/json'
@@ -15,13 +16,8 @@ def get_url(package_name) -> str:
         'manylinux_2_24_x86_64',
         'any'
     ]
-    print(url)
     raw_content = requests.get(url).content
-    try:
-        data = json.loads(raw_content)['urls']
-    except Exception as e:
-        print(package_name)
-        print(e)
+    data = json.loads(raw_content)['urls']
     files = {url['filename']: url['url'] for url in data if url['filename'].endswith('.whl')}
     for tag in accepted_tags:
         for file in files:
@@ -43,14 +39,19 @@ def get_requirements() -> list:
     dependencies = [re.sub(regex, '', dependency).strip() for dependency in dependencies] # remove version info
     return lines + dependencies
 
-def fetch_packages(package_urls: list):
-
-    for url in package_urls:
-        requests.get(url)
-    pass
+def fetch_package(package_url: str):
+    filename = package_url.split('/')[-1]
+    request = requests.get(package_url)
+    with open(f'.tmp/{filename}', 'wb') as wheel:
+        wheel.write(request.content)
 
 
 
 if __name__ == '__main__':
-    pass
+    shutil.rmtree('.tmp', ignore_errors=True)
+    os.mkdir('.tmp')
+    packages = get_requirements()
+    package_urls = [get_url(package) for package in packages]
+    for url in package_urls:
+        fetch_package(url)
 

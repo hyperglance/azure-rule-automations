@@ -111,3 +111,5 @@ deployment/terraform/automations/terraform.exe
 deployment/terraform/automations/terraform/subscriptions.csv
 
 files/HyperglanceAutomations.json
+
+deployment/metadata/.tmp
