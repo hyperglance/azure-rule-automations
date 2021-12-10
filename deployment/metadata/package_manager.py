@@ -15,15 +15,18 @@ def get_url(package_name) -> str:
         'manylinux_2_24_x86_64',
         'any'
     ]
-    data = json.loads(requests.get(url).content)['urls']
+    print(url)
+    raw_content = requests.get(url).content
+    try:
+        data = json.loads(raw_content)['urls']
+    except Exception as e:
+        print(package_name)
+        print(e)
     files = {url['filename']: url['url'] for url in data if url['filename'].endswith('.whl')}
-    parsed_items = []
     for tag in accepted_tags:
         for file in files:
             item = parse_wheel_filename(file)
             if tag in item.platform_tags:
-                print('tag is ' + tag)
-                print('platform tags ' + str(item.platform_tags))
                 return files[str(item)]
     raise Exception('no suitable package versions for the plaform were found')
 
@@ -37,22 +40,17 @@ def get_requirements() -> list:
     for line in lines:
         url = f'https://pypi.org/pypi/{line}/json'
         dependencies += json.loads(requests.get(url).content)['info']['requires_dist']
-    dependencies = [re.sub(regex, '', dependency) for dependency in dependencies] # remove version info
+    dependencies = [re.sub(regex, '', dependency).strip() for dependency in dependencies] # remove version info
     return lines + dependencies
 
 def fetch_packages(package_urls: list):
+
     for url in package_urls:
         requests.get(url)
     pass
 
-class Package:
-    def __init__(self, name: str, version: str):
-        self.name = name
-        self.version = version
 
 
 if __name__ == '__main__':
-    #print(get_requirements())
-    print(get_url('mypy'))
-    #fetch_packages(get_urls(get_requirements))
+    pass
 
