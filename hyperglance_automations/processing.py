@@ -97,7 +97,8 @@ def process_event(automation_data, outputs):
         pool_size = min(len(resources), max_pool_size)
 
         # Divide the resources into batches for full pool utilisation
-        resource_batches = (resources[i:i + pool_size] for i in range(0, len(resources), pool_size))
+        batch_size = max(1, len(resources) // pool_size)
+        resource_batches = (resources[i:i + batch_size] for i in range(0, len(resources), batch_size))
 
         # Mix in other args to supply to the worker func
         batches_args = ([resource_batch, automation_name, action_params] for resource_batch in resource_batches)
