@@ -116,7 +116,6 @@ locals {
 
 data "external" "compress-function-code" {
     program = local.is-windows ? ["py", "-3", var.compress-code-script, "hyperglance_automations"] : ["python3", var.compress-code-script, "hyperglance_automations"]
-    depends_on = [null_resource.download-requirements]
 }
 
 data "external" "permissions" {
