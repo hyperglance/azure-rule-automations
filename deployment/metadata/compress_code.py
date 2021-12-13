@@ -5,6 +5,7 @@ import pathlib
 import json
 import base64 as encoder
 import os
+import time
 
 def zip_code(output: pathlib.Path, to_zip: pathlib.Path):
     shutil.make_archive(output, 'zip', to_zip)
@@ -13,9 +14,10 @@ def zip_code(output: pathlib.Path, to_zip: pathlib.Path):
         return encoder.standard_b64encode(hashlib.sha256(bytes).digest()).decode('utf-8');
 
 def cp_deployment(deployment_root: pathlib.Path, output: pathlib.Path):
-    excluded = ['deployment', 'files', 'LICENSE', 'README.md', '.git', 'SECURITY.md' ]
-    shutil.rmtree(output, ignore_errors=True)
+    excluded = ['deployment', 'files', 'LICENSE', 'README.md', '.git', 'SECURITY.md', 'bitbucket-pipelines.yml', 'requirements.txt' ]
+    
     os.mkdir(output)
+    
     for item in deployment_root.iterdir() :
         if not any(word in str(item) for word in excluded):
             if item.is_dir():
@@ -25,7 +27,8 @@ def cp_deployment(deployment_root: pathlib.Path, output: pathlib.Path):
 
 if __name__ == '__main__':
     hyperglance_root = pathlib.Path(__file__).resolve().parents[2]
-    cp_deployment(hyperglance_root, sys.argv[1])
-    digest = zip_code(sys.argv[1], sys.argv[1])
+    cp_deployment(hyperglance_root, 'temp')
+    digest = zip_code(sys.argv[1], 'temp')
+    shutil.rmtree('temp', ignore_errors=True)
     # give to terraform 
     print(json.dumps({'HASH': digest}))
