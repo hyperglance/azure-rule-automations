@@ -25,7 +25,7 @@ def hyperglance_automation(credential, resource: dict, cloud, automation_params 
       compute_client.disks.begin_delete(resource_group, name) 
     nic_deletion_processes = []
     for nic in network_interfaces:
-      nic_deletion_processes += network_client.network_interfaces.begin_delete(nic.id.split('/')[4], nic.id.split('/')[8])
+      nic_deletion_processes.append(network_client.network_interfaces.begin_delete(nic.id.split('/')[4], nic.id.split('/')[8]))
     for process in nic_deletion_processes:
       process.wait(300) 
     for config in ip_configs:
