@@ -6,6 +6,7 @@ from msrestazure.azure_cloud import *
 import os
 from pathlib import Path
 import json
+from multiprocessing import Pool
 
 logger = logging.getLogger()
 
@@ -69,21 +70,7 @@ def worker(resources, automation_name, action_params):
 
 
 def process_event(automation_data, outputs):
-    time_elapsed = 0.0
-    time_limit = get_time_limit()
 
-    #  TODO on a subscription (per group of subscriptions) basis when resources from hyper backend
-    # 1. Have Environment user facing metadata
-    # 2. Are grouped per subscription
-    if('core.windows.net' in os.environ["hyperglanceautomations_STORAGE"]):
-        cloud = AZURE_PUBLIC_CLOUD
-    else:
-        cloud = AZURE_US_GOV_CLOUD
-    
-    # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
-    # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
-    # or identity (Function App -> Identity) must be used to authenticate.
-    credential = identity.DefaultAzureCredential(environment=cloud.endpoints.active_directory)    
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -104,7 +91,7 @@ def process_event(automation_data, outputs):
         batches_args = ([resource_batch, automation_name, action_params] for resource_batch in resource_batches)
 
         # Run work on process pool, blocks until complete
-        with mp.Pool(processes=pool_size) as pool:
+        with Pool(processes=pool_size) as pool:
             results = pool.starmap(worker, batches_args, 1)
 
         ## Augment the automation dict to track errors and add to the output, this gets reported back to Hyperglance
