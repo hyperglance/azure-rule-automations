@@ -18,6 +18,13 @@ variable "region" {
   default = "East US"
 }
 
+# Define the Azure region to deploy the resources in
+variable "enable-insights" {
+  type        = bool
+  description = "Enable application insights on the function app"
+  default = true
+}
+
 variable "compress-code-script" {
   type = string
   description = "Location of the script which compresses hyperglance_automations function code and generates a sha256 digest"

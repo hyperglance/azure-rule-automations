@@ -1,3 +1,11 @@
+locals {
+  is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
+  insights-setting = var.insights-enable ? {
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
+  } : 
+  {}
+}
+
 # Generare random suffix for Hyperglance automations associated assets
 resource "random_pet" "hyperglance-automations-name" {
   length    = 2
@@ -67,17 +75,18 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   auth_settings {
     enabled = true
   }
-  app_settings = {
+  app_settings = merge({
     hyperglanceautomations_STORAGE = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
     AzureWebJobsDisableHomepage    = true
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
     ENABLE_ORYX_BUILD              = true
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
     FUNCTIONS_WORKER_RUNTIME       = "python"
     BUILD_FLAGS                    = "UseExpressBuild"
     HASH = data.external.compress-function-code.result["HASH"] 
     WEBSITE_RUN_FROM_PACKAGE = "https://${azurerm_storage_account.hyperglance-automations-storage-account.name}.blob.core.windows.net/${azurerm_storage_container.hyperglance-automations-storage-container.name}/${azurerm_storage_blob.function-code.name}"
-  }  
+  },
+  local.insights-setting
+  )
   
   tags = var.tags
 }
@@ -85,6 +94,7 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
 
 # Enable application insights for function
 resource "azurerm_application_insights" "hyperglance-automations-application-insights" {
+  count               = var.enable-insights ? 1 : 0
   name                = random_pet.hyperglance-automations-name.id
   location            = azurerm_resource_group.hyperglance-automations-resource-group.location
   resource_group_name = azurerm_resource_group.hyperglance-automations-resource-group.name
@@ -119,9 +129,7 @@ resource "azurerm_storage_blob" "function-code" {
     depends_on = [data.external.compress-function-code]
 }
 
-locals {
-  is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
-}
+
 
 data "external" "compress-function-code" {
     program = local.is-windows ? ["py", "-3", var.compress-code-script, "hyperglance_automations"] : ["python3", var.compress-code-script, "hyperglance_automations"]
