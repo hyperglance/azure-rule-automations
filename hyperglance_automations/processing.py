@@ -97,8 +97,8 @@ def process_event(automation_data, outputs):
         ## Augment the automation dict to track errors and add to the output, this gets reported back to Hyperglance
         critical_error_msg = "\n".join((r["critical_error"] for r in results if r["critical_error"] is not None)).strip()
         automation["critical_error"] = critical_error_msg if critical_error_msg else None
-        automation["processed"] = [r["processed"] for r in results]
-        automation["errored"] = [r["errored"] for r in results]
+        automation["processed"].extend([r["processed"] for r in results])
+        automation["errored"].extend([r["errored"] for r in results])
         outputs.append(automation)
 
 def get_time_limit():
