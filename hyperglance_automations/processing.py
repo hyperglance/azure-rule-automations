@@ -52,7 +52,7 @@ def worker(resources, automation_name, action_params):
             logger.info("time limit exceeded for " + str(resource))
             resource["error"] = \
             "The time limit for the action has surpassed. Consider changing your function app service plan. https://docs.microsoft.com/en-us/azure/app-service/app-service-plan-manage"
-            automation['errored'].append(resource)
+            report['errored'].append(resource)
             continue
 
         before = perf_counter()

@@ -1,0 +1,135 @@
+{
+    "name" : "adhoc-automation-run",
+    "results" : [ {
+      "automation" : {
+        "name" : "vm_delete",
+        "params": 
+          {
+            "Delete Associated Resources" : "true"
+          }
+        
+      },
+      "entities" : [ {
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-0",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-1",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-2",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-3",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-4",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-5",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-6",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-7",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-8",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      },{
+        "matchedAttributes" : { },
+        "datasource" : "Azure",
+        "name" : "threading-vm-9",
+        "attributes" : {
+          "Resource Group" : "threading-resources"
+        },
+        "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
+        "id" : "",
+        "type" : "",
+        "tags" : {
+        }
+      }],
+      "entityType" : ""
+    } ]
+  }
