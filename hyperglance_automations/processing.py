@@ -76,6 +76,8 @@ def process_event(automation_data, outputs):
             continue
         resources = chunk["entities"]
         automation = chunk["automation"]
+        automation['processed'] = []
+        automation['errored'] = []
         automation_name = automation["name"]
         action_params = automation.get("params", {})
 
