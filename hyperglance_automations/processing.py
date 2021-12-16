@@ -74,16 +74,15 @@ def process_event(automation_data, outputs):
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
+        
         resources = chunk["entities"]
         automation = chunk["automation"]
-        automation['processed'] = []
-        automation['errored'] = []
         automation_name = automation["name"]
         action_params = automation.get("params", {})
-
+        
         # Calc pool size
         max_pool_size = 20
-        pool_size = min(len(resources), max_pool_size)
+        pool_size = max(1, min(len(resources), max_pool_size))
 
         # Divide the resources into batches for full pool utilisation
         batch_size = max(1, len(resources) // pool_size)
@@ -99,8 +98,8 @@ def process_event(automation_data, outputs):
         ## Augment the automation dict to track errors and add to the output, this gets reported back to Hyperglance
         critical_error_msg = "\n".join((r["critical_error"] for r in results if r["critical_error"] is not None)).strip()
         automation["critical_error"] = critical_error_msg if critical_error_msg else None
-        automation["processed"].extend(resource['processed'] for resource in results for resource['processed'] in resource['processed'])
-        automation["errored"].extend(resource['errored'] for resource in results for resource['errored'] in resource['errored'])
+        automation["processed"] = [resource['processed'] for resource in results for resource['processed'] in resource['processed']]
+        automation["errored"] = [resource['errored'] for resource in results for resource['errored'] in resource['errored']]
         outputs.append(automation)
 
 def get_time_limit():
