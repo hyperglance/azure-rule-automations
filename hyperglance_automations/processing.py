@@ -70,7 +70,7 @@ def worker(resources, automation_name, action_params):
 
 
 def process_event(automation_data, outputs):
-
+    concurrency_limit = get_concurrency_limit()
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -81,8 +81,8 @@ def process_event(automation_data, outputs):
         action_params = automation.get("params", {})
         
         # Calc pool size
-        max_pool_size = 20
-        pool_size = max(1, min(len(resources), max_pool_size))
+    
+        pool_size = max(1, min(len(resources), concurrency_limit))
 
         # Divide the resources into batches for full pool utilisation
         batch_size = max(1, len(resources) // pool_size)
@@ -114,6 +114,18 @@ def get_time_limit():
         time_limit = 480 # 8 minutes default value
     finally:
        return time_limit - 120 # return the time limit with a 2 minute safty buffer
+
+       
+def get_concurrency_limit():
+    default = 20
+    config_file = Path(__file__).resolve().parents[0].joinpath('config.json')
+    try:
+        with open(config_file) as file:
+            value = json.loads(file.read())['concurrent-processes']
+    except Exception as e:
+        logger.info('there was a problem loading the config.json file: ' + str(e))
+        return default
+    return value
 
 
 
