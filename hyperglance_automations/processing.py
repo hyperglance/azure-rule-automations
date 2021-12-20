@@ -10,11 +10,7 @@ from multiprocessing import Pool
 
 logger = logging.getLogger()
 
-def worker(resources, automation_name, action_params):
-    # time limits so we don't run for longer than the Azure function execution limit
-    time_elapsed = 0.0
-    time_limit = get_time_limit()
-
+def worker(resources, automation_name, action_params, time_limit, time_elapsed):
     # Report object to return
     report = {
         "processed": [],
@@ -27,8 +23,10 @@ def worker(resources, automation_name, action_params):
     # 2. Are grouped per subscription
     if('core.windows.net' in os.environ["hyperglanceautomations_STORAGE"]):
         cloud = AZURE_PUBLIC_CLOUD
+        logger.debug('azure env: default')
     else:
         cloud = AZURE_US_GOV_CLOUD
+        logger.debug('azure env: gov-cloud')
     
     # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
     # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
@@ -41,7 +39,7 @@ def worker(resources, automation_name, action_params):
             "".join(["hyperglance_automations.", "actions.", automation_name])
         )
     except Exception as e:
-        logger.info(e)
+        logger.exception(e)
         msg = "Unable to find or load an automation called: %s" % automation_name
         report["critical_error"] = msg
         return report
@@ -58,9 +56,10 @@ def worker(resources, automation_name, action_params):
         before = perf_counter()
         try:
             automation_to_execute.hyperglance_automation(credential, resource, cloud, action_params)
+            logger.info(f'resource: {resource} processed successfully')
             report["processed"].append(resource)
         except Exception as err:
-            logger.info(err)
+            logger.exception(err)
             resource["error"] = str(err)  # augment resource with an error field
             report["errored"].append(resource)
         finally:
@@ -70,7 +69,11 @@ def worker(resources, automation_name, action_params):
 
 
 def process_event(automation_data, outputs):
+    time_elapsed = 0.0
     concurrency_limit = get_concurrency_limit()
+    # time limits so we don't run for longer than the Azure function execution limit
+    time_limit = get_time_limit()
+    logger.info(f'processing new event with time limit {time_limit} and concurrency limit {concurrency_limit}')
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -78,18 +81,32 @@ def process_event(automation_data, outputs):
         resources = chunk["entities"]
         automation = chunk["automation"]
         automation_name = automation["name"]
+        resource_type = chunk['entityType']
         action_params = automation.get("params", {})
+
+        logger.info(f'running {automation_name} for {len(resources)} resources of type {resource_type}')
         
         # Calc pool size
     
         pool_size = max(1, min(len(resources), concurrency_limit))
 
+        logger.debug(f'pool size : {pool_size}')
+
         # Divide the resources into batches for full pool utilisation
         batch_size = max(1, len(resources) // pool_size)
+
+        logger.debug(f'batch size : {batch_size}')
+
         resource_batches = (resources[i:i + batch_size] for i in range(0, len(resources), batch_size))
 
         # Mix in other args to supply to the worker func
-        batches_args = ([resource_batch, automation_name, action_params] for resource_batch in resource_batches)
+        batches_args = ([
+            resource_batch,
+            automation_name,
+            action_params,
+            time_limit,
+            time_elapsed
+        ] for resource_batch in resource_batches)
 
         # Run work on process pool, blocks until complete
         with Pool(processes=pool_size) as pool:
