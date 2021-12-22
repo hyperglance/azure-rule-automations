@@ -4,41 +4,42 @@ from pathlib import Path
 def generate_string(prefix, count):
     event = \
 """
-"name" : "adhoc-automation-run",
-  "results" : [ {
-    "automation" : {
-      "name" : "vm_delete",
-      "params" : {
-        "Delete Associated Resources" : "true"
-      }
-    },
-    "entities" : [ 
+{
+    "name" : "adhoc-automation-run",
+        "results" : [ {
+        "automation" : {
+        "name" : "vm_delete",
+        "params" : {
+            "Delete Associated Resources" : "true"
+        },
+        "entities" : [ 
         """
-    for index in range(1, count):
+    for index in range(1, int(count)):
         event += \
-    """{
+    """{{
         "accountAlias" : "DevTest",
         "datasource" : "Azure",
         "name" : "{prefix}-vm-{number}",
-        "attributes" : {
+        "attributes" : {{
             "Resource Group" : "{prefix}-resources"
-        },
+        }},
         "subscription" : "40e09a1d-3299-4294-9a9c-ebaede24b9c8",
         "id" : "/subscriptions/40e09a1d-3299-4294-9a9c-ebaede24b9c8/resourceGroups/{prefix}-resources/providers/Microsoft.Compute/virtualMachines/{prefix}-vm-{number}",
         "type" : "Virtual Machine",
-        "tags" : {
+        "tags" : {{
 
-        }
-      },""".format(prefix=prefix, number=count)
-    event.strip(',')
+        }}
+      }},""".format(prefix=prefix, number=index)
+    event = event[:-1]
     event += """],
     "entityType" : "Virtual Machine"
-  } ]
+  } }]
 }
 """
+    return event
 
 if __name__ == '__main__':
-    file = Path(__file__).joinpath('event.json')
-    with open(file, 'w') as fileout:
-        fileout.write(generate_string(sys.argv[1]), sys.argv[2])
+    file = Path(__file__).resolve().parents[0].joinpath('event.json')
+    with open(file, 'w+') as fileout:
+        fileout.write(generate_string(sys.argv[1], sys.argv[2]))
 
