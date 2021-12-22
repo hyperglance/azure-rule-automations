@@ -23,10 +23,8 @@ def worker(resources, automation_name, action_params, time_limit, time_elapsed):
     # 2. Are grouped per subscription
     if('core.windows.net' in os.environ["hyperglanceautomations_STORAGE"]):
         cloud = AZURE_PUBLIC_CLOUD
-        logger.debug('azure env: default')
     else:
         cloud = AZURE_US_GOV_CLOUD
-        logger.debug('azure env: gov-cloud')
     
     # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
     # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
@@ -90,12 +88,12 @@ def process_event(automation_data, outputs):
     
         pool_size = max(1, min(len(resources), concurrency_limit))
 
-        logger.debug(f'pool size : {pool_size}')
+        logger.info(f'pool size : {pool_size}')
 
         # Divide the resources into batches for full pool utilisation
         batch_size = max(1, len(resources) // pool_size)
 
-        logger.debug(f'batch size : {batch_size}')
+        logger.info(f'batch size : {batch_size}')
 
         resource_batches = (resources[i:i + batch_size] for i in range(0, len(resources), batch_size))
 
@@ -127,7 +125,7 @@ def get_time_limit():
         constituents = string_value.split(':')
         time_limit = (60*60*int(constituents[0]))+(60*int(constituents[1]))+int(constituents[2])
     except Exception as e:
-        logger.info(e)
+        logger.exception(e)
         time_limit = 480 # 8 minutes default value
     finally:
        return time_limit - 120 # return the time limit with a 2 minute safty buffer
@@ -140,7 +138,7 @@ def get_concurrency_limit():
         with open(config_file) as file:
             value = json.loads(file.read())['concurrent-processes']
     except Exception as e:
-        logger.info('there was a problem loading the config.json file: ' + str(e))
+        logger.exception('there was a problem loading the config.json file: ' + str(e))
         return default
     return value
 
