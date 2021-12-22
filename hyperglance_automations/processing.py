@@ -45,7 +45,7 @@ def worker(resources, automation_name, action_params, time_limit, time_elapsed):
     ## For each of Resource, execute the automation
     for resource in resources:
         if time_elapsed > time_limit:
-            logger.info("time limit exceeded for " + str(resource))
+            logger.exception("time limit exceeded for " + str(resource))
             resource["error"] = \
             "The time limit for the action has surpassed. Consider changing your function app service plan. https://docs.microsoft.com/en-us/azure/app-service/app-service-plan-manage"
             report['errored'].append(resource)
@@ -96,6 +96,9 @@ def process_event(automation_data, outputs):
         logger.info(f'batch size : {batch_size}')
 
         resource_batches = (resources[i:i + batch_size] for i in range(0, len(resources), batch_size))
+
+        logger.info(f'resource batches : {resource_batches}')
+
 
         # Mix in other args to supply to the worker func
         batches_args = ([
