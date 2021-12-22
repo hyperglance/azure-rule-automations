@@ -44,6 +44,7 @@ def worker(resources, automation_name, action_params, time_limit, time_elapsed):
 
     ## For each of Resource, execute the automation
     for resource in resources:
+        resource['attributes']['Resource Group'] = resource['attributes']['Resource Group'].lower()
         if time_elapsed > time_limit:
             logger.exception("time limit exceeded for " + str(resource))
             resource["error"] = \
