@@ -3,7 +3,10 @@ import json
 import json
 import sys
 import importlib
-import os
+import logging
+
+logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
+logger = logging.getLogger()
 
 
 def main(path: str):
@@ -18,7 +21,7 @@ def main(path: str):
     try:
         processing.process_event(payload, outputs) 
     except Exception as e:
-        print(e)
+        logger.exception(e)
     
 
 if __name__ == "__main__":

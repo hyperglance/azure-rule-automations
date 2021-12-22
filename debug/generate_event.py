@@ -11,10 +11,11 @@ def generate_string(prefix, count):
         "name" : "vm_delete",
         "params" : {
             "Delete Associated Resources" : "true"
+        }
         },
         "entities" : [ 
         """
-    for index in range(1, int(count)):
+    for index in range(0, int(count)):
         event += \
     """{{
         "accountAlias" : "DevTest",
@@ -33,7 +34,7 @@ def generate_string(prefix, count):
     event = event[:-1]
     event += """],
     "entityType" : "Virtual Machine"
-  } }]
+  }]
 }
 """
     return event
