@@ -1,4 +1,6 @@
-def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
+import asyncio
+
+async def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
   from azure.mgmt.compute import ComputeManagementClient
   from azure.mgmt.network import NetworkManagementClient
 
@@ -17,7 +19,8 @@ def hyperglance_automation(credential, resource: dict, cloud, automation_params 
         ip_configs.extend(network_client.network_interfaces.get(nic.id.split('/')[4], nic.id.split('/')[8]).ip_configurations)
   process = compute_client.virtual_machines.begin_delete(resource['attributes']['Resource Group'], resource['name'])
   if automation_params["Delete Associated Resources"] == 'true':
-    process.wait(300) # timeout after 300 seconds
+    while not process.done():
+      await asyncio.sleep(5)
     compute_client.disks.begin_delete(os_disk.id.split('/')[4], os_disk.id.split('/')[8]) 
     for disk in data_disks:
       resource_group = disk.managed_disk.id.split('/')[4]
@@ -27,14 +30,14 @@ def hyperglance_automation(credential, resource: dict, cloud, automation_params 
     for nic in network_interfaces:
       nic_deletion_processes.append(network_client.network_interfaces.begin_delete(nic.id.split('/')[4], nic.id.split('/')[8]))
     for process in nic_deletion_processes:
-      process.wait(300) 
+      while not process.done:
+        await asyncio.sleep(5)
     for config in ip_configs:
       if config.public_ip_address == None:
         continue
       ip_resource_group = config.public_ip_address.id.split('/')[4]
       ip_name = config.public_ip_address.id.split('/')[8]
       network_client.public_ip_addresses.begin_delete(ip_resource_group, ip_name)
-    
 
 
 

@@ -73,7 +73,6 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
     ENABLE_ORYX_BUILD              = true
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
-    FUNCTIONS_WORKER_PROCESS_COUNT = 10
     FUNCTIONS_WORKER_RUNTIME       = "python"
     BUILD_FLAGS                    = "UseExpressBuild"
     HASH = data.external.compress-function-code.result["HASH"] 
