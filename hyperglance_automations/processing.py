@@ -12,7 +12,7 @@ from multiprocessing import Pool
 logger = logging.getLogger()
 
 
-def worker(resources, automation_name, action_params, time_limit, time_elapsed):
+def worker(resources, automation_name, action_params):
     # Report object to return
     report = {
         "processed": [],
