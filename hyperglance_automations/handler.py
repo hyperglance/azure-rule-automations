@@ -14,7 +14,7 @@ def main(eventBlob: func.InputStream):
         storage.put_pending_status(blob_prefix)
         processing.process_event(payload, outputs) 
     except Exception as e:
-        msg = 'Failed to process Rule automations. %s' % err
+        msg = f'Failed to process Rule automations. {e}'
         logger.exception(msg)
         
         # Report critical lambda failure back to Hyperglance
