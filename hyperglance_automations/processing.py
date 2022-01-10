@@ -7,8 +7,7 @@ from msrestazure.azure_cloud import *
 import os
 from pathlib import Path
 import json
-from multiprocessing import Pool
-
+from multiprocessing.pool import ThreadPool as Pool
 logger = logging.getLogger()
 
 
