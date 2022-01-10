@@ -3,6 +3,7 @@ import json
 import hyperglance_automations.processing as processing
 import hyperglance_automations.storage_utils as storage
 import logging
+import asyncio
 
 logger = logging.getLogger()
 
@@ -12,7 +13,7 @@ def main(eventBlob: func.InputStream):
     blob_prefix = storage.map_prefix(eventBlob.name)
     try:
         storage.put_pending_status(blob_prefix)
-        processing.process_event(payload, outputs) 
+        asyncio.run(processing.process_event(payload, outputs))
     except Exception as e:
         msg = f'Failed to process Rule automations. {e}'
         logger.exception(msg)

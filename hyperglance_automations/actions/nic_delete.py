@@ -1,4 +1,6 @@
-def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
+import asyncio
+
+async def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
   from azure.mgmt.network import NetworkManagementClient
 
   url = cloud.endpoints.resource_manager
