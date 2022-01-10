@@ -1,5 +1,6 @@
 import importlib
 import logging
+import multiprocessing
 from time import perf_counter
 import azure.identity as identity
 from msrestazure.azure_cloud import *
@@ -9,6 +10,7 @@ import json
 from multiprocessing import Pool
 
 logger = logging.getLogger()
+
 
 def worker(resources, automation_name, action_params, time_limit, time_elapsed):
     # Report object to return
@@ -37,7 +39,7 @@ def worker(resources, automation_name, action_params, time_limit, time_elapsed):
             "".join(["hyperglance_automations.", "actions.", automation_name])
         )
     except Exception as e:
-        logger.exception(e)
+        logger.info(e)
         msg = "Unable to find or load an automation called: %s" % automation_name
         report["critical_error"] = msg
         return report
@@ -45,13 +47,6 @@ def worker(resources, automation_name, action_params, time_limit, time_elapsed):
     ## For each of Resource, execute the automation
     for resource in resources:
         resource['attributes']['Resource Group'] = resource['attributes']['Resource Group'].lower()
-        if time_elapsed > time_limit:
-            logger.exception("time limit exceeded for " + str(resource))
-            resource["error"] = \
-            "The time limit for the action has surpassed. Consider changing your function app service plan. https://docs.microsoft.com/en-us/azure/app-service/app-service-plan-manage"
-            report['errored'].append(resource)
-            continue
-
         before = perf_counter()
         try:
             automation_to_execute.hyperglance_automation(credential, resource, cloud, action_params)
@@ -61,18 +56,18 @@ def worker(resources, automation_name, action_params, time_limit, time_elapsed):
             logger.exception(err)
             resource["error"] = str(err)  # augment resource with an error field
             report["errored"].append(resource)
-        finally:
-            time_elapsed += (perf_counter()-before)
     
     return report
 
 
 def process_event(automation_data, outputs):
-    time_elapsed = 0.0
+
+    multiprocessing.log_to_stderr()
+    logger = multiprocessing.get_logger()
+    logger.setLevel(logging.INFO)
+
     concurrency_limit = get_concurrency_limit()
-    # time limits so we don't run for longer than the Azure function execution limit
-    time_limit = get_time_limit()
-    logger.info(f'processing new event with time limit {time_limit} and concurrency limit {concurrency_limit}')
+    logger.info(f'processing new event with concurrency limit {concurrency_limit}')
     for chunk in automation_data["results"]:
         if not "automation" in chunk:
             continue
@@ -96,18 +91,15 @@ def process_event(automation_data, outputs):
 
         logger.info(f'batch size : {batch_size}')
 
-        resource_batches = (resources[i:i + batch_size] for i in range(0, len(resources), batch_size))
+        resource_batches = [resources[i:i + batch_size] for i in range(0, len(resources), batch_size)]
 
         logger.info(f'resource batches : {resource_batches}')
-
 
         # Mix in other args to supply to the worker func
         batches_args = ([
             resource_batch,
             automation_name,
             action_params,
-            time_limit,
-            time_elapsed
         ] for resource_batch in resource_batches)
 
         # Run work on process pool, blocks until complete
@@ -120,19 +112,6 @@ def process_event(automation_data, outputs):
         automation["processed"] = [resource['processed'] for resource in results for resource['processed'] in resource['processed']]
         automation["errored"] = [resource['errored'] for resource in results for resource['errored'] in resource['errored']]
         outputs.append(automation)
-
-def get_time_limit():
-    host_file = Path(__file__).resolve().parents[0].joinpath('host.json')
-    try:
-        with open(host_file) as file:
-            string_value = json.loads(file.read())['functionTimeout']
-        constituents = string_value.split(':')
-        time_limit = (60*60*int(constituents[0]))+(60*int(constituents[1]))+int(constituents[2])
-    except Exception as e:
-        logger.exception(e)
-        time_limit = 480 # 8 minutes default value
-    finally:
-       return time_limit - 120 # return the time limit with a 2 minute safty buffer
 
        
 def get_concurrency_limit():
