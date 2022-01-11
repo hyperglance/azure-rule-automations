@@ -4,13 +4,14 @@ import json
 import sys
 import importlib
 import logging
+import asyncio
 
-logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger()
 
 
 def main(path: str):
-    hyperglance_path = pathlib.Path(__file__).parents[1]
+    hyperglance_path = pathlib.Path(__file__).resolve().parents[1]
     sys.path.append(str(hyperglance_path.absolute()))
     processing = importlib.import_module("hyperglance_automations.processing")
     file = pathlib.Path(path)
@@ -19,9 +20,10 @@ def main(path: str):
     payload = json.loads(mock_blob)
     outputs = []
     try:
-        processing.process_event(payload, outputs) 
+        asyncio.run(processing.process_event(payload, outputs))
     except Exception as e:
         logger.exception(e)
+    logger.info(outputs)
     
 
 if __name__ == "__main__":
