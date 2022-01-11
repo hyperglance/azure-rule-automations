@@ -117,12 +117,10 @@ resource "azurerm_storage_blob" "function-code" {
     type = "Block"
     source = local.code-zip
     depends_on = [data.external.compress-function-code]
-    content_md5            = filemd5(local.code-zip)
 }
 
 locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
-  code-zip   = "${path.root}/hyperglance_automations.zip"
 }
 
 data "external" "compress-function-code" {
