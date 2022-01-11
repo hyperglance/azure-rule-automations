@@ -25,7 +25,7 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
   if automation_params["Delete Associated Resources"] == 'true':
     while not process.done():
       if perf_counter() - start > time_limit:
-        raise Exception(f'Time limit surpassed for resource {resource_name}')
+        raise Exception(f'Time limit ({time_limit}) surpassed for resource {resource_name}')
       await asyncio.sleep(5)
     compute_client.disks.begin_delete(os_disk.id.split('/')[4], os_disk.id.split('/')[8]) 
     for disk in data_disks:
@@ -38,7 +38,7 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
     for process in nic_deletion_processes:
       while not process.done:
         if perf_counter() - start > time_limit:
-          raise Exception(f'Time limit surpassed for resource {resource_name}')
+          raise Exception(f'Time limit ({time_limit}) surpassed for resource {resource_name}')
         await asyncio.sleep(5)
     for config in ip_configs:
       if config.public_ip_address == None:
