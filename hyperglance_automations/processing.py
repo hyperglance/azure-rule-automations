@@ -19,6 +19,8 @@ async def process_event(automation_data, outputs):
         cloud = AZURE_PUBLIC_CLOUD
     else:
         cloud = AZURE_US_GOV_CLOUD
+
+    event_loop = asyncio.get_event_loop()
     
     # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
     # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
@@ -55,7 +57,7 @@ async def process_event(automation_data, outputs):
                 action_params = automation.get("params", {})
                 
                 tasks.append(
-                    asyncio.create_task(
+                    event_loop.create_task(
                         automation_to_execute.hyperglance_automation(
                             credential, resource, cloud, action_params
                         )
@@ -72,19 +74,6 @@ async def process_event(automation_data, outputs):
                 automation["processed"].remove(resource)
         for task in tasks:
             await task
-        
-
-
-def get_concurrency_limit():
-    default = 20
-    config_file = Path(__file__).resolve().parents[0].joinpath('config.json')
-    try:
-        with open(config_file) as file:
-            value = json.loads(file.read())['concurrent-processes']
-    except Exception as e:
-        logger.exception('there was a problem loading the config.json file: ' + str(e))
-        return default
-    return value
 
 def get_time_limit():
     host_file = Path(__file__).resolve().parents[0].joinpath('host.json')

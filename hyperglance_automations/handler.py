@@ -13,7 +13,8 @@ def main(eventBlob: func.InputStream):
     blob_prefix = storage.map_prefix(eventBlob.name)
     try:
         storage.put_pending_status(blob_prefix)
-        asyncio.run(processing.process_event(payload, outputs))
+        event_loop = asyncio.new_event_loop() 
+        event_loop.run_until_complete(processing.process_event(payload, outputs))
     except Exception as e:
         msg = f'Failed to process Rule automations. {e}'
         logger.exception(msg)
