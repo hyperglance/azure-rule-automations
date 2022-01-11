@@ -70,7 +70,7 @@ resource "azurerm_function_app" "hyperglance-automations-app" {
   app_settings = {
     hyperglanceautomations_STORAGE = azurerm_storage_account.hyperglance-automations-storage-account.primary_connection_string
     AzureWebJobsDisableHomepage    = true
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
+    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.hyperglance-automations-application-insights.instrumentation_key
     ENABLE_ORYX_BUILD              = true
     SCM_DO_BUILD_DURING_DEPLOYMENT = 1
     FUNCTIONS_WORKER_RUNTIME       = "python"
@@ -115,12 +115,14 @@ resource "azurerm_storage_blob" "function-code" {
     storage_account_name = azurerm_storage_account.hyperglance-automations-storage-account.name
     storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
     type = "Block"
-    source = "${path.root}/hyperglance_automations.zip"
+    source = local.code-zip
     depends_on = [data.external.compress-function-code]
+    content_md5            = filemd5(local.code-zip)
 }
 
 locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
+  code-zip   = "${path.root}/hyperglance_automations.zip"
 }
 
 data "external" "compress-function-code" {

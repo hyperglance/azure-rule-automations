@@ -6,12 +6,13 @@ from msrestazure.azure_cloud import *
 import os
 from pathlib import Path
 import json
+import asyncio
 
 logger = logging.getLogger()
 
-def process_event(automation_data, outputs):
-    time_elapsed = 0.0
-    time_limit = get_time_limit()
+async def process_event(automation_data, outputs):
+
+    event_loop = asyncio.get_event_loop()
 
     #  TODO on a subscription (per group of subscriptions) basis when resources from hyper backend
     # 1. Have Environment user facing metadata
@@ -48,28 +49,35 @@ def process_event(automation_data, outputs):
             automation["critical_error"] = msg
             return
 
+        tasks = {}
+
         ## For each of Resource, execute the automation
         for resource in resources:
-            if time_elapsed > time_limit:
-                logger.info("time limit exceeded for " + str(resource))
-                resource["error"] = \
-                "The time limit for the action has surpassed. Consider changing your function app service plan. https://docs.microsoft.com/en-us/azure/app-service/app-service-plan-manage"
+            action_params = automation.get("params", {})
+                
+            task = event_loop.create_task(
+                automation_to_execute.hyperglance_automation(
+                    credential,
+                    resource, 
+                    cloud, 
+                    action_params, 
+                    start=perf_counter(), 
+                    time_limit= 30 #get_time_limit()
+                )
+            )
+            
+            tasks[task] = resource
+
+        for task, resource in tasks.items():
+            try:
+                await task
+            except Exception as e:
+                resource['error'] = str(e)
                 automation['errored'].append(resource)
                 continue
-            before = perf_counter()
-            try:
-                action_params = automation.get("params", {})
-                automation_to_execute.hyperglance_automation(
-                    credential, resource, cloud, action_params
-                )
-                automation["processed"].append(resource)
+            automation['processed'].append(resource)
 
-            except Exception as err:
-                logger.info(err)
-                resource["error"] = str(err)  # augment resource with an error field
-                automation["errored"].append(resource)
-            finally:
-                time_elapsed += (perf_counter()-before)
+
 
 def get_time_limit():
     host_file = Path(__file__).resolve().parents[0].joinpath('host.json')
