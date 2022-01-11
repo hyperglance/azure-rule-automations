@@ -1,6 +1,6 @@
 import asyncio
 
-async def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
+async def hyperglance_automation(credential, resource: dict, cloud, automation_params = '', **kwargs):
   from azure.mgmt.compute import ComputeManagementClient
   
   url = cloud.endpoints.resource_manager

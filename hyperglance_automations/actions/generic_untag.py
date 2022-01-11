@@ -1,6 +1,6 @@
 import asyncio
 
-async def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
+async def hyperglance_automation(credential, resource: dict, cloud, automation_params = '', **kwargs):
   from azure.mgmt.resource.resources import ResourceManagementClient
 
   url = cloud.endpoints.resource_manager
@@ -14,6 +14,7 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
   del ammended[automation_params['Key']]
   tags = {'properties': {'tags' : ammended}}
   client.create_or_update_at_scope(resource['id'], tags)
+
     
 
 def info() -> dict:

@@ -12,6 +12,8 @@ logger = logging.getLogger()
 
 async def process_event(automation_data, outputs):
 
+    event_loop = asyncio.get_event_loop()
+
     #  TODO on a subscription (per group of subscriptions) basis when resources from hyper backend
     # 1. Have Environment user facing metadata
     # 2. Are grouped per subscription
@@ -19,8 +21,6 @@ async def process_event(automation_data, outputs):
         cloud = AZURE_PUBLIC_CLOUD
     else:
         cloud = AZURE_US_GOV_CLOUD
-
-    event_loop = asyncio.get_event_loop()
     
     # Environment variables (Function App -> Settings -> Configuration -> Application Settings) 
     # {AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET}
@@ -49,31 +49,31 @@ async def process_event(automation_data, outputs):
             automation["critical_error"] = msg
             return
 
-        tasks = []
+        tasks = {}
 
         ## For each of Resource, execute the automation
         for resource in resources:
-            try:
-                action_params = automation.get("params", {})
+            action_params = automation.get("params", {})
                 
-                tasks.append(
-                    event_loop.create_task(
-                        automation_to_execute.hyperglance_automation(
-                            credential, resource, cloud, action_params
-                        )
-                    )
+            tasks[resource] = event_loop.create_task(
+                automation_to_execute.hyperglance_automation(
+                    credential,
+                    resource, 
+                    cloud, 
+                    action_params, 
+                    start=perf_counter(), 
+                    time_limit=get_time_limit()
                 )
-
-                automation["processed"].append(resource)
-            
-
-            except Exception as err:
-                logger.info(err)
-                resource["error"] = str(err)  # augment resource with an error field
-                automation["errored"].append(resource)
-                automation["processed"].remove(resource)
-        for task in tasks:
+            )
+        for resource, task in tasks:
             await task
+            exception = task.exception()
+            if exception != None:
+                resource['error'] = str(exception)
+                automation['errored'].append(resource)
+            else:
+                automation['processed'].append(resource)
+
 
 def get_time_limit():
     host_file = Path(__file__).resolve().parents[0].joinpath('host.json')

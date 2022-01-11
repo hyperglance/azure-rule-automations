@@ -1,15 +1,19 @@
 import asyncio
+from time import perf_counter
 
-async def hyperglance_automation(credential, resource: dict, cloud, automation_params = ''):
+async def hyperglance_automation(credential, resource: dict, cloud, automation_params = '', **kwargs):
   from azure.mgmt.compute import ComputeManagementClient
   from azure.mgmt.network import NetworkManagementClient
 
+  time_limit = kwargs['time_limit']
+  start = kwargs['start']
+  resource_name = resource['name']
 
   url = cloud.endpoints.resource_manager
   compute_client = ComputeManagementClient(credential, resource['subscription'], base_url=url, credential_scopes=[url + '/.default']) 
   network_client = NetworkManagementClient(credential, resource['subscription'], base_url=url, credential_scopes=[url + '/.default'])
   
-  vm = compute_client.virtual_machines.get(resource['attributes']['Resource Group'], resource['name'])  
+  vm = compute_client.virtual_machines.get(resource['attributes']['Resource Group'], resource_name)  
   if automation_params["Delete Associated Resources"] == 'true':
       ip_configs = []
       os_disk = vm.storage_profile.os_disk.managed_disk
@@ -17,9 +21,11 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
       network_interfaces = vm.network_profile.network_interfaces
       for nic in network_interfaces:
         ip_configs.extend(network_client.network_interfaces.get(nic.id.split('/')[4], nic.id.split('/')[8]).ip_configurations)
-  process = compute_client.virtual_machines.begin_delete(resource['attributes']['Resource Group'], resource['name'])
+  process = compute_client.virtual_machines.begin_delete(resource['attributes']['Resource Group'], resource_name)
   if automation_params["Delete Associated Resources"] == 'true':
     while not process.done():
+      if perf_counter() - start > time_limit:
+        raise Exception(f'Time limit surpassed for resource {resource_name}')
       await asyncio.sleep(5)
     compute_client.disks.begin_delete(os_disk.id.split('/')[4], os_disk.id.split('/')[8]) 
     for disk in data_disks:
@@ -31,6 +37,8 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
       nic_deletion_processes.append(network_client.network_interfaces.begin_delete(nic.id.split('/')[4], nic.id.split('/')[8]))
     for process in nic_deletion_processes:
       while not process.done:
+        if perf_counter() - start > time_limit:
+          raise Exception(f'Time limit surpassed for resource {resource_name}')
         await asyncio.sleep(5)
     for config in ip_configs:
       if config.public_ip_address == None:
