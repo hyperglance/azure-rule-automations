@@ -41,8 +41,8 @@ resource "azurerm_app_service_plan" "hyperglance-automations-app-service-plan" {
   kind                = "FunctionApp"
   reserved            = true
   sku {
-    tier = "Standard"
-    size = "S1"
+    tier = "Dynamic"
+    size = "Y1"
   }
   tags = var.tags
 }
