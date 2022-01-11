@@ -55,24 +55,28 @@ async def process_event(automation_data, outputs):
         for resource in resources:
             action_params = automation.get("params", {})
                 
-            tasks[resource] = event_loop.create_task(
+            task = event_loop.create_task(
                 automation_to_execute.hyperglance_automation(
                     credential,
                     resource, 
                     cloud, 
                     action_params, 
                     start=perf_counter(), 
-                    time_limit=get_time_limit()
+                    time_limit= 30 #get_time_limit()
                 )
             )
-        for resource, task in tasks:
-            await task
-            exception = task.exception()
-            if exception != None:
-                resource['error'] = str(exception)
+            
+            tasks[task] = resource
+
+        for task, resource in tasks.items():
+            try:
+                await task
+            except Exception as e:
+                resource['error'] = str(e)
                 automation['errored'].append(resource)
-            else:
-                automation['processed'].append(resource)
+                continue
+            automation['processed'].append(resource)
+
 
 
 def get_time_limit():
