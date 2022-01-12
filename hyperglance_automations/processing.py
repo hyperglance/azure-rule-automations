@@ -54,7 +54,8 @@ async def process_event(automation_data, outputs):
         ## For each of Resource, execute the automation
         for resource in resources:
             action_params = automation.get("params", {})
-                
+            resource['attributes']['Resource Group'] = resource['attributes']['Resource Group'].lower()
+
             task = event_loop.create_task(
                 automation_to_execute.hyperglance_automation(
                     credential,
