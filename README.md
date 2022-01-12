@@ -45,20 +45,20 @@ The account under which Hyperglance run needs to be able to write to the Storage
 	 git clone https://github.com/hyperglance/azure-rule-automations.git
 	```
 
-4. _[optional]_
-
-	Navigate to the terraform deployment directory
+4. Navigate to the terraform deployment directory
 	
 	`cd azure-rule-automations/deployment/terraform/automations`
     
 
-	 Create a a file subscriptions.csv with the subscriptions you want to act on separated by a comma.
+5. _[optional - __multiple subscriptions__]_ 
+
+	Create a a file subscriptions.csv with the subscriptions you want to act on separated by a comma. There is no need to add the default subscription here, only additional subscriptions.
 
 	
 	`MySubscription, AnotherSubscriptionOfMine, ...`
 	
 
-  	To use the automations accross __multiple subscriptions__, generate the correct terraform configuration for your environment. 
+  	Generate the correct terraform configuration for your environment. 
  
  	__Windows__
 	
@@ -69,14 +69,14 @@ The account under which Hyperglance run needs to be able to write to the Storage
 	
 	`python3 provision.py`
 
-	Deploy the stack:
+6. Deploy the stack:
 	```
 	terraform init
 	terraform apply
 	 ```
 	
 
-6. Once complete, the storage account ID and  will be returned:
+7. Once complete, the storage account ID and  will be returned:
 	```bash
 	Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
 
@@ -90,7 +90,7 @@ The account under which Hyperglance run needs to be able to write to the Storage
 	Copy the storage account ID into the Hyperglance UI:  __Settings ➔ Automations ➔ Azure ➔ Storage Account Resource ID__
 	or visit this URL: https://your-hyperglance-ip/#/admin/automations
 
-7. __That's it - Automations are now enabled against this subscription!__
+8. __That's it - Automations are now enabled against this subscription!__
 	* Within Hyperglance click on any rule or visit the Advanced Search page to start exploring automations features.
 
 # Keeping The Deployment Up-To-Date
