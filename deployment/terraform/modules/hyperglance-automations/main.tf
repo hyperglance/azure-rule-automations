@@ -115,14 +115,12 @@ resource "azurerm_storage_blob" "function-code" {
     storage_account_name = azurerm_storage_account.hyperglance-automations-storage-account.name
     storage_container_name = azurerm_storage_container.hyperglance-automations-storage-container.name
     type = "Block"
-    source = local.code-zip
+    source = "${path.root}/hyperglance_automations.zip"
     depends_on = [data.external.compress-function-code]
-    content_md5            = filemd5(local.code-zip)
 }
 
 locals {
   is-windows = substr(pathexpand("~"), 0, 1) == "/" ? false : true
-  code-zip   = "${path.root}/hyperglance_automations.zip"
 }
 
 data "external" "compress-function-code" {

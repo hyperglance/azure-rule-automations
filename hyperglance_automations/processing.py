@@ -62,7 +62,7 @@ async def process_event(automation_data, outputs):
                     cloud, 
                     action_params, 
                     start=perf_counter(), 
-                    time_limit= 30 #get_time_limit()
+                    time_limit= get_time_limit()
                 )
             )
             
