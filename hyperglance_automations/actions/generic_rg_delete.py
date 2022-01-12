@@ -11,13 +11,22 @@ def info() -> dict:
     "displayName": "Delete Resource Group",
     "description": "Deletes a Resource Group",
     "resourceTypes": [
-      "Virtual Machine"
+      "Virtual Machine",
+      "Virtual Network",
+      "Disk",
+      "Storage Account",
+      "Subnet",
+      "Public IP Address",
+      "Network Interface",
+      "Function App",
+      "Logic App",
+      "Event Grid Topic"
     ],
     "params": [
 
     ],
     "permissions": [ 
-      
+      "Microsoft.Resources/subscriptions/resourcegroups/delete"
     ]
   }
 
