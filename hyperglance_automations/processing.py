@@ -75,8 +75,9 @@ async def process_event(automation_data, outputs):
                     automation['errored'].append(resource)
 
             task.add_done_callback(report)
- 
-    pending = asyncio.all_tasks() - {asyncio.current_task()}
+    
+    # nb. Use these deprecated methods instead of asyncio.all_tasks() and asyncio.current_task() for Azure's asyncio version
+    pending = asyncio.tasks.Task.all_tasks() - {asyncio.Task.current_task()} 
     await asyncio.gather(*pending)
 
 
