@@ -78,7 +78,10 @@ async def process_event(automation_data, outputs):
     
     # nb. Use these deprecated methods instead of asyncio.all_tasks() and asyncio.current_task() for Azure's asyncio version
     pending = asyncio.tasks.Task.all_tasks() - {asyncio.Task.current_task()} 
-    await asyncio.gather(*pending)
+    try:
+        await asyncio.gather(*pending)
+    except Exception as e:
+        pass # don't do anything, the callback already reported this.
 
 
 
