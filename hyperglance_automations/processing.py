@@ -48,8 +48,7 @@ async def process_event(automation_data, outputs):
             msg = "Unable to find or load an automation called: %s" % automation_name
             automation["critical_error"] = msg
             return
-
-        tasks = {}
+        
 
         ## For each of Resource, execute the automation
         for resource in resources:
@@ -66,17 +65,19 @@ async def process_event(automation_data, outputs):
                     time_limit= get_time_limit()
                 )
             )
-            
-            tasks[task] = resource
 
-        for task, resource in tasks.items():
-            try:
-                await task
-            except Exception as e:
-                resource['error'] = str(e)
-                automation['errored'].append(resource)
-                continue
-            automation['processed'].append(resource)
+            def report(future: asyncio.Future):
+                problem = future.exception()
+                if problem is None:
+                    automation['processed'].append(resource)
+                else:
+                    resource['error'] = str(problem)
+                    automation['errored'].append(resource)
+
+            task.add_done_callback(report)
+
+    pending = asyncio.all_tasks()
+    await asyncio.gather(*pending)
 
 
 
