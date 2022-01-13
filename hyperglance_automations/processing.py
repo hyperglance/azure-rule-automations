@@ -75,8 +75,8 @@ async def process_event(automation_data, outputs):
                     automation['errored'].append(resource)
 
             task.add_done_callback(report)
-
-    pending = asyncio.all_tasks()
+ 
+    pending = asyncio.all_tasks() - {asyncio.current_task()}
     await asyncio.gather(*pending)
 
 
