@@ -36,7 +36,7 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
     for nic in network_interfaces:
       nic_deletion_processes.append(network_client.network_interfaces.begin_delete(nic.id.split('/')[4], nic.id.split('/')[8]))
     for process in nic_deletion_processes:
-      while not process.done:
+      while not process.done():
         if perf_counter() - start > time_limit:
           raise Exception(f'Time limit ({time_limit}) surpassed for resource {resource_name}')
         await asyncio.sleep(5)
