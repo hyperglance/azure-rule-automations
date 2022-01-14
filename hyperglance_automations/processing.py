@@ -84,18 +84,7 @@ async def process_event(automation_data, outputs):
             resource['error'] = str(problem)
             automation['errored'].append(resource_map[task])
 
-        
-
-
-
-# def report(future: asyncio.Future, resource, automation):
-#             problem = future.exception()
-#             print('RESOURCE ' + resource['name'])
-#             if problem is None:
-#                 automation['processed'].append(resource)
-#             else:
-#                 resource['error'] = str(problem)
-#                 automation['errored'].append(resource)
+    
 
 
 def get_time_limit():
