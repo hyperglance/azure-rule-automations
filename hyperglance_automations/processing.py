@@ -49,6 +49,7 @@ async def process_event(automation_data, outputs):
             automation["critical_error"] = msg
             return
         
+        resource_map = {}
 
         ## For each of Resource, execute the automation
         for resource in resources:
@@ -66,23 +67,35 @@ async def process_event(automation_data, outputs):
                 )
             )
 
-            def report(future: asyncio.Future):
-                problem = future.exception()
-                if problem is None:
-                    automation['processed'].append(resource)
-                else:
-                    resource['error'] = str(problem)
-                    automation['errored'].append(resource)
-
-            task.add_done_callback(report)
-    
+            resource_map[task] = resource
+                
     # nb. Use these deprecated methods instead of asyncio.all_tasks() and asyncio.current_task() for Azure's asyncio version
-    pending = asyncio.tasks.Task.all_tasks() - {asyncio.Task.current_task()} 
+    pending = asyncio.tasks.Task.all_tasks() - {asyncio.Task.current_task()}
     try:
         await asyncio.gather(*pending)
     except Exception as e:
-        pass # don't do anything, the callback already reported this.
+        pass # we will collect these separately
 
+    for task in pending:
+        problem = task.exception()
+        if problem is None:
+            automation['processed'].append(resource_map[task])
+        else:
+            resource['error'] = str(problem)
+            automation['errored'].append(resource_map[task])
+
+        
+
+
+
+# def report(future: asyncio.Future, resource, automation):
+#             problem = future.exception()
+#             print('RESOURCE ' + resource['name'])
+#             if problem is None:
+#                 automation['processed'].append(resource)
+#             else:
+#                 resource['error'] = str(problem)
+#                 automation['errored'].append(resource)
 
 
 def get_time_limit():
