@@ -4,7 +4,7 @@
 
 > Enable Hyperglance to automate, fix and optimize your cloud.
 
-This repository contains terraform configurations, that deploy a Azure Storage Account and Azure Function that you connect with your Hyperglance VM. Giving you the power to automate your cloud and fix configuration issues quickly & easily.
+This repository contains terraform configurations, that deploy a Azure Storage Account and Azure Function that you connect with your Hyperglance VM. Giving you the power to automate your cloud and fix configuration issues quickly & easily. Some actions are not enabled by default, these may be moved from `hyperglance_automations/extras` to `hyperglance_automations/actions` to enable them.
 
 ## Pre-Requisites
 
