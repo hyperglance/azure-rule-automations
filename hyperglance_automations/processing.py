@@ -77,12 +77,13 @@ async def process_event(automation_data, outputs):
         pass # we will collect these separately
 
     for task in pending:
+        resource = resource_map[task]
         problem = task.exception()
         if problem is None:
-            automation['processed'].append(resource_map[task])
+            automation['processed'].append(resource)
         else:
             resource['error'] = str(problem)
-            automation['errored'].append(resource_map[task])
+            automation['errored'].append(resource)
 
     
 
