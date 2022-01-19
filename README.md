@@ -93,6 +93,8 @@ The account under which Hyperglance run needs to be able to write to the Storage
 8. __That's it - Automations are now enabled against this subscription!__
 	* Within Hyperglance click on any rule or visit the Advanced Search page to start exploring automations features.
 
+_Please allow for up to 10 minutes for the deployment to take effect in the Azure backend before running any automations_
+
 # Keeping The Deployment Up-To-Date
 
 Note: When you first ran terraform apply Terraform created a tfstate file in the local directory to track the resources it created. In order to update the existing deployment you need that tfstate file to be in the deployment/terraform/automations directory.
