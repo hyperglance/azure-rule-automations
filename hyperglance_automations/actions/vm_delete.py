@@ -24,23 +24,26 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
   process = compute_client.virtual_machines.begin_delete(resource['attributes']['Resource Group'], resource_name)
   if automation_params["Delete Associated Resources"] == 'true':
     while not process.done():
-      if perf_counter() - start > time_limit:
-        raise Exception(f'Time limit ({time_limit}) surpassed for resource {resource_name}')
-      await asyncio.sleep(5)
+     if perf_counter() - start > time_limit:
+       raise Exception(f'Time limit ({time_limit}) surpassed for resource {resource_name}')
+     await asyncio.sleep(5)
+  if os_disk['delete_option'] is not 'delete': 
     compute_client.disks.begin_delete(os_disk.id.split('/')[4], os_disk.id.split('/')[8], polling=False) 
-    for disk in data_disks:
+  for disk in data_disks:
       resource_group = disk.managed_disk.id.split('/')[4]
       name = disk.managed_disk.id.split('/')[8]
-      compute_client.disks.begin_delete(resource_group, name, polling=False) 
-    nic_deletion_processes = []
-    for nic in network_interfaces:
-      nic_deletion_processes.append(network_client.network_interfaces.begin_delete(nic.id.split('/')[4], nic.id.split('/')[8]))
-    for process in nic_deletion_processes:
+      if disk['delete_option'] is not 'delete':
+        compute_client.disks.begin_delete(resource_group, name, polling=False) 
+  nic_deletion_processes = []
+  for nic in network_interfaces:
+      if nic['delete_option'] is not 'delete':
+        nic_deletion_processes.append(network_client.network_interfaces.begin_delete(nic.id.split('/')[4], nic.id.split('/')[8]))
+  for process in nic_deletion_processes:
       while not process.done():
         if perf_counter() - start > time_limit:
           raise Exception(f'Time limit ({time_limit}) surpassed for resource {resource_name}')
         await asyncio.sleep(5)
-    for config in ip_configs:
+  for config in ip_configs:
       if config.public_ip_address == None:
         continue
       ip_resource_group = config.public_ip_address.id.split('/')[4]
