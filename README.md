@@ -4,7 +4,7 @@
 
 > Enable Hyperglance to automate, fix and optimize your cloud.
 
-This repository contains terraform configurations, that deploy a Azure Storage Account and Azure Function that you connect with your Hyperglance VM. Giving you the power to automate your cloud and fix configuration issues quickly & easily.
+This repository contains terraform configurations, that deploy a Azure Storage Account and Azure Function that you connect with your Hyperglance VM. Giving you the power to automate your cloud and fix configuration issues quickly & easily. Some actions are not enabled by default, these may be moved from `hyperglance_automations/extras` to `hyperglance_automations/actions` to enable them.
 
 ## Pre-Requisites
 
@@ -92,6 +92,16 @@ The account under which Hyperglance run needs to be able to write to the Storage
 
 8. __That's it - Automations are now enabled against this subscription!__
 	* Within Hyperglance click on any rule or visit the Advanced Search page to start exploring automations features.
+
+_Occasionally, The Azure function app container will fail to launch to an instance without manual intervention. The problem originates from Azure's backend integration with storage accounts. The workaround for this is as follows:_
+
+1. Navigate to `Function App` in the Azure console.
+
+2. Open the Function App that matches the Hyperglance name from the storage account string (the output from the terraform deployment)
+
+3. In the side pannel, select `Functions`. The functions tab should now buffer for about 20 seconds before displaying `hyperglance_automations`
+
+Now the Function App will function as intended and any pending automations will run.
 
 # Keeping The Deployment Up-To-Date
 

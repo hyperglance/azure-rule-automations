@@ -1,3 +1,5 @@
+import asyncio
+
 async def hyperglance_automation(credential, resource: dict, cloud, automation_params = '', **kwargs):
   from azure.mgmt.resource import ResourceManagementClient
 
@@ -9,7 +11,7 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
 def info() -> dict:
   INFO = {
     "displayName": "Delete Resource Group",
-    "description": "Deletes a Resource Group",
+    "description": "Deletes the Resource Group in which the resource is contained",
     "resourceTypes": [
       "Virtual Machine",
       "Virtual Network",
