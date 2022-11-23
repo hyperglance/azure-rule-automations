@@ -10,7 +10,7 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
         base_url=url,
         credential_scopes=[url + '/.default']).tags
     previous = client.get_at_scope(resource['id'])
-    appended = previous.properties.tags
+    appended = previous.properties.tags or []
     appended[automation_params['Key']] = automation_params['Value']
     tags = {'properties': {'tags' : appended}}
     client.create_or_update_at_scope(resource['id'], tags)

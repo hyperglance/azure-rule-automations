@@ -10,7 +10,7 @@ async def hyperglance_automation(credential, resource: dict, cloud, automation_p
       base_url=url,
       credential_scopes=[url + '/.default']).tags
   previous = client.get_at_scope(resource['id'])
-  previous_tags = previous.properties.tags
+  previous_tags = previous.properties.tags or []
   placeholder = previous_tags[automation_params["Old Key"]]
   del previous_tags[automation_params['Old Key']]
   previous_tags[automation_params['New Key']] = placeholder
