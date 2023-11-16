@@ -111,7 +111,7 @@ _To update your deployment you will need to:_
 
  * Pull the latest updates from git 
 	```
-    cd aws-rule-automations
+    cd azure-rule-automations
     git pull
 	```
 
